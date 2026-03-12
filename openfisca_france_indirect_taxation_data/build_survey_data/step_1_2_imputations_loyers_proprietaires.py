@@ -19,9 +19,7 @@ log = logging.getLogger(__name__)
 # Etape 0-1-2: Imputation de loyers pour les ménages propriétaires
 
 
-@temporary_store_decorator(
-    config_files_directory=config_files_directory, file_name="indirect_taxation_tmp"
-)
+@temporary_store_decorator(config_files_directory=config_files_directory, file_name="indirect_taxation_tmp")
 def build_imputation_loyers_proprietaires(temporary_store=None, year=None):
     """Impute rent for owner"""
     assert temporary_store is not None
@@ -98,29 +96,17 @@ def build_imputation_loyers_proprietaires(temporary_store=None, year=None):
         )
         assert imput00.catsurf.isin(list(range(1, 9))).all()
         # TODO: vérifier ce qe l'on fait notamment regarder la vleur catsurf = 2 ommise dans le code stata
-        imput00.maison = 1 - (
-            (imput00.cc == 5) & (imput00.catsurf == 1) & (imput00.maison_appart == 1)
-        )
-        imput00.maison = 1 - (
-            (imput00.cc == 5) & (imput00.catsurf == 3) & (imput00.maison_appart == 1)
-        )
-        imput00.maison = 1 - (
-            (imput00.cc == 5) & (imput00.catsurf == 8) & (imput00.maison_appart == 1)
-        )
-        imput00.maison = 1 - (
-            (imput00.cc == 4) & (imput00.catsurf == 1) & (imput00.maison_appart == 1)
-        )
+        imput00.maison = 1 - ((imput00.cc == 5) & (imput00.catsurf == 1) & (imput00.maison_appart == 1))
+        imput00.maison = 1 - ((imput00.cc == 5) & (imput00.catsurf == 3) & (imput00.maison_appart == 1))
+        imput00.maison = 1 - ((imput00.cc == 5) & (imput00.catsurf == 8) & (imput00.maison_appart == 1))
+        imput00.maison = 1 - ((imput00.cc == 4) & (imput00.catsurf == 1) & (imput00.maison_appart == 1))
 
         try:
             parser = ConfigParser()
             config_ini = os.path.join(config_files_directory, "config.ini")
             parser.read([config_ini])
-            directory_path = os.path.normpath(
-                parser.get("openfisca_france_indirect_taxation", "assets")
-            )
-            hotdeck = pandas.read_stata(
-                os.path.join(directory_path, "hotdeck_result.dta")
-            )
+            directory_path = os.path.normpath(parser.get("openfisca_france_indirect_taxation", "assets"))
+            hotdeck = pandas.read_stata(os.path.join(directory_path, "hotdeck_result.dta"))
         except Exception:
             hotdeck = survey.get_values(table="hotdeck_result")
 
@@ -189,8 +175,4 @@ if __name__ == "__main__":
     deb = time.process_time()()
     year = 1995
     build_imputation_loyers_proprietaires(year=year)
-    log.info(
-        "step 0_1_2_build_imputation_loyers_proprietaires duration is {}".format(
-            time.process_time()() - deb
-        )
-    )
+    log.info("step 0_1_2_build_imputation_loyers_proprietaires duration is {}".format(time.process_time()() - deb))

@@ -23,13 +23,9 @@ def build_raw_bdf_nomenclature(year=2017):
     table_bdf = pd.read_excel(file_path, skiprows=3)
 
     # Get divisions
-    table_bdf.loc[:, "Division"] = table_bdf.loc[
-        :, "Code sur\n2, 3, 4 positions"
-    ].str.endswith("***")
+    table_bdf.loc[:, "Division"] = table_bdf.loc[:, "Code sur\n2, 3, 4 positions"].str.endswith("***")
     table_bdf.loc[table_bdf["Division"].isna(), "Division"] = False
-    bdf_division = table_bdf.loc[
-        table_bdf["Division"], ["Code sur\n2, 3, 4 positions", "Rubriques"]
-    ]
+    bdf_division = table_bdf.loc[table_bdf["Division"], ["Code sur\n2, 3, 4 positions", "Rubriques"]]
     bdf_division.rename(
         columns={
             "Code sur\n2, 3, 4 positions": "Code_division",
@@ -38,19 +34,13 @@ def build_raw_bdf_nomenclature(year=2017):
         inplace=True,
     )
     bdf_division["Label_division"] = bdf_division["Label_division"].str.lower()
-    bdf_division["Code_division"] = bdf_division["Code_division"].str.replace(
-        r"\*", "", regex=True
-    )
+    bdf_division["Code_division"] = bdf_division["Code_division"].str.replace(r"\*", "", regex=True)
     table_bdf.drop(table_bdf[table_bdf["Division"]].index, inplace=True)
 
     # Get groups
-    table_bdf.loc[:, "Groupe"] = table_bdf.loc[
-        :, "Code sur\n2, 3, 4 positions"
-    ].str.endswith("**")
+    table_bdf.loc[:, "Groupe"] = table_bdf.loc[:, "Code sur\n2, 3, 4 positions"].str.endswith("**")
     table_bdf.loc[table_bdf["Groupe"].isna(), "Groupe"] = False
-    bdf_groupe = table_bdf.loc[
-        table_bdf["Groupe"], ["Code sur\n2, 3, 4 positions", "Rubriques"]
-    ]
+    bdf_groupe = table_bdf.loc[table_bdf["Groupe"], ["Code sur\n2, 3, 4 positions", "Rubriques"]]
     bdf_groupe.rename(
         columns={
             "Code sur\n2, 3, 4 positions": "Code_groupe",
@@ -59,19 +49,13 @@ def build_raw_bdf_nomenclature(year=2017):
         inplace=True,
     )
     bdf_groupe["Label_groupe"] = bdf_groupe["Label_groupe"].str.lower()
-    bdf_groupe["Code_groupe"] = bdf_groupe["Code_groupe"].str.replace(
-        r"\*", "", regex=True
-    )
+    bdf_groupe["Code_groupe"] = bdf_groupe["Code_groupe"].str.replace(r"\*", "", regex=True)
     table_bdf.drop(table_bdf[table_bdf["Groupe"]].index, inplace=True)
 
     # Get classes
-    table_bdf.loc[:, "Classe"] = table_bdf.loc[
-        :, "Code sur\n2, 3, 4 positions"
-    ].str.endswith("*")
+    table_bdf.loc[:, "Classe"] = table_bdf.loc[:, "Code sur\n2, 3, 4 positions"].str.endswith("*")
     table_bdf.loc[table_bdf["Classe"].isna(), "Classe"] = False
-    bdf_classe = table_bdf.loc[
-        table_bdf["Classe"], ["Code sur\n2, 3, 4 positions", "Rubriques"]
-    ]
+    bdf_classe = table_bdf.loc[table_bdf["Classe"], ["Code sur\n2, 3, 4 positions", "Rubriques"]]
     bdf_classe.rename(
         columns={
             "Code sur\n2, 3, 4 positions": "Code_classe",
@@ -80,9 +64,7 @@ def build_raw_bdf_nomenclature(year=2017):
         inplace=True,
     )
     bdf_classe.loc[:, "Label_classe"] = bdf_classe.loc[:, "Label_classe"].str.lower()
-    bdf_classe.loc[:, "Code_classe"] = bdf_classe.loc[:, "Code_classe"].str.replace(
-        r"\*", "", regex=True
-    )
+    bdf_classe.loc[:, "Code_classe"] = bdf_classe.loc[:, "Code_classe"].str.replace(r"\*", "", regex=True)
 
     table_bdf.drop(table_bdf[table_bdf["Classe"]].index, inplace=True)
     table_bdf.drop(
@@ -90,13 +72,9 @@ def build_raw_bdf_nomenclature(year=2017):
         axis=1,
         inplace=True,
     )
-    table_bdf.drop(
-        table_bdf[table_bdf["Code sur 5 positions"].isna()].index, axis=0, inplace=True
-    )
+    table_bdf.drop(table_bdf[table_bdf["Code sur 5 positions"].isna()].index, axis=0, inplace=True)
 
-    table_bdf.loc[:, "Code_sous_classe"] = (
-        table_bdf.loc[:, "Code sur 5 positions"].astype(int).astype(str).str.zfill(5)
-    )
+    table_bdf.loc[:, "Code_sous_classe"] = table_bdf.loc[:, "Code sur 5 positions"].astype(int).astype(str).str.zfill(5)
 
     # Extract first two digits for the division, the first three for the group, the first four for the class
     table_bdf.loc[:, "Code_division"] = table_bdf.loc[:, "Code_sous_classe"].str[:2]
@@ -121,9 +99,9 @@ def build_raw_bdf_nomenclature(year=2017):
             "Code_sous_classe",
         ],
     ]
-    bdf_nomenclature.loc[:, "code_coicop"] = bdf_nomenclature.loc[
-        :, "Code_sous_classe"
-    ].apply(lambda x: ".".join([x[:2], x[2:3], x[3:4], x[4:]]))
+    bdf_nomenclature.loc[:, "code_coicop"] = bdf_nomenclature.loc[:, "Code_sous_classe"].apply(
+        lambda x: ".".join([x[:2], x[2:3], x[3:4], x[4:]])
+    )
 
     return bdf_nomenclature
 
@@ -232,21 +210,15 @@ def build_complete_bdf_nomenclature(year=2017, to_csv=True):
                       intial BDF codes and adjusted ones.
     """
     bdf_nomenclature = build_raw_bdf_nomenclature(year=2017)
-    bdf_to_cn_dataframe = pd.DataFrame(
-        list(adjust_to_cn_nomenclature.items()), columns=["code_coicop", "adjusted_bdf"]
+    bdf_to_cn_dataframe = pd.DataFrame(list(adjust_to_cn_nomenclature.items()), columns=["code_coicop", "adjusted_bdf"])
+    bdf_nomenclature = bdf_nomenclature.merge(bdf_to_cn_dataframe, on="code_coicop", how="outer")
+    bdf_nomenclature.loc[:, "adjusted_bdf"] = bdf_nomenclature.loc[:, "adjusted_bdf"].fillna(
+        bdf_nomenclature.loc[:, "code_coicop"]
     )
-    bdf_nomenclature = bdf_nomenclature.merge(
-        bdf_to_cn_dataframe, on="code_coicop", how="outer"
-    )
-    bdf_nomenclature.loc[:, "adjusted_bdf"] = bdf_nomenclature.loc[
-        :, "adjusted_bdf"
-    ].fillna(bdf_nomenclature.loc[:, "code_coicop"])
 
     # Optionally save to CSV
     if to_csv:
-        output_path = os.path.join(
-            assets_directory, "legislation", f"bdf_{year}_nomenclature.csv"
-        )
+        output_path = os.path.join(assets_directory, "legislation", f"bdf_{year}_nomenclature.csv")
         bdf_nomenclature.to_csv(output_path, index=False)
 
     return bdf_nomenclature
@@ -260,9 +232,7 @@ def read_bdf_nomenclature(year=2017):
                       columns for division, group, class, and subclass labels
                       and codes.
     """
-    file_path = os.path.join(
-        assets_directory, "legislation", f"bdf_{year}_nomenclature.csv"
-    )
+    file_path = os.path.join(assets_directory, "legislation", f"bdf_{year}_nomenclature.csv")
     bdf_nomenclature = pd.read_csv(file_path, dtype="str")
     return bdf_nomenclature
 

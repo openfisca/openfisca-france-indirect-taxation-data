@@ -10,9 +10,7 @@ from openfisca_france_indirect_taxation.scripts import build_bdf_nomenclature
 
 
 legislation_directory = os.path.join(assets_directory, "legislation")
-bdf_nomenclature = pd.read_csv(
-    os.path.join(legislation_directory, "bdf_2017_nomenclature.csv")
-)
+bdf_nomenclature = pd.read_csv(os.path.join(legislation_directory, "bdf_2017_nomenclature.csv"))
 
 
 def add_fiscal_categories_to_bdf_nomenclature(bdf_nomenclature, to_csv=False):
@@ -365,9 +363,7 @@ def add_fiscal_categories_to_bdf_nomenclature(bdf_nomenclature, to_csv=False):
     # Sauvegarde le résultat dans un fichier CSV si demandé
     if to_csv:
         output_path = os.path.join(legislation_directory, "bdf_2017_legislation.csv")
-        os.makedirs(
-            os.path.dirname(output_path), exist_ok=True
-        )  # Crée le répertoire s'il n'existe pas
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Crée le répertoire s'il n'existe pas
         bdf_nomenclature.to_csv(output_path, index=False)
 
     return bdf_nomenclature
@@ -375,16 +371,12 @@ def add_fiscal_categories_to_bdf_nomenclature(bdf_nomenclature, to_csv=False):
 
 def test_bdf_legislation():
     bdf_nomenclature = build_bdf_nomenclature.build_complete_bdf_nomenclature()
-    bdf_legislation = add_fiscal_categories_to_bdf_nomenclature(
-        bdf_nomenclature, to_csv=True
-    )
+    bdf_legislation = add_fiscal_categories_to_bdf_nomenclature(bdf_nomenclature, to_csv=True)
     if bdf_legislation.categorie_fiscale.isnull().any():
         return bdf_legislation.loc[bdf_legislation.categorie_fiscale.isnull()]
 
 
 if __name__ == "__main__":
     bdf_nomenclature = build_bdf_nomenclature.build_complete_bdf_nomenclature()
-    bdf_legislation = add_fiscal_categories_to_bdf_nomenclature(
-        bdf_nomenclature, to_csv=True
-    )
+    bdf_legislation = add_fiscal_categories_to_bdf_nomenclature(bdf_nomenclature, to_csv=True)
     test_bdf_legislation()

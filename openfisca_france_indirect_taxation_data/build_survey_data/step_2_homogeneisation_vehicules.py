@@ -19,9 +19,7 @@ log = logging.getLogger(__name__)
 # Données sur les types de carburants
 
 
-@temporary_store_decorator(
-    config_files_directory=config_files_directory, file_name="indirect_taxation_tmp"
-)
+@temporary_store_decorator(config_files_directory=config_files_directory, file_name="indirect_taxation_tmp")
 def build_homogeneisation_vehicules(temporary_store=None, year=None):
     """Compute vehicule numbers by type"""
     assert temporary_store is not None
@@ -46,12 +44,8 @@ def build_homogeneisation_vehicules(temporary_store=None, year=None):
         vehicule.rename(columns={"carbu01": "carbu1"}, inplace=True)
         vehicule.rename(columns={"carbu02": "carbu2"}, inplace=True)
         vehicule["veh_tot"] = 1
-        vehicule["veh_essence"] = 1 * (vehicule["carbu1"] == 1) + 1 * (
-            vehicule["carbu2"] == 1
-        )
-        vehicule["veh_diesel"] = 1 * (vehicule["carbu1"] == 2) + 1 * (
-            vehicule["carbu2"] == 2
-        )
+        vehicule["veh_essence"] = 1 * (vehicule["carbu1"] == 1) + 1 * (vehicule["carbu2"] == 1)
+        vehicule["veh_diesel"] = 1 * (vehicule["carbu1"] == 2) + 1 * (vehicule["carbu2"] == 2)
         vehicule.index = vehicule.index.astype(ident_men_dtype)
 
     if year in [2005, 2011, 2017]:
@@ -82,13 +76,9 @@ def build_homogeneisation_vehicules(temporary_store=None, year=None):
 
         # Compute the number of cars by category and save
         # Ignore GPL, electric and others than essence and diesel
-        vehicule = vehicule.groupby(by="ident_men")[
-            ["veh_tot", "veh_essence", "veh_diesel"]
-        ].sum()
+        vehicule = vehicule.groupby(by="ident_men")[["veh_tot", "veh_essence", "veh_diesel"]].sum()
         vehicule["pourcentage_vehicule_essence"] = 0
-        vehicule.loc[vehicule.veh_tot != 0, "pourcentage_vehicule_essence"] = (
-            vehicule.veh_essence / vehicule.veh_tot
-        )
+        vehicule.loc[vehicule.veh_tot != 0, "pourcentage_vehicule_essence"] = vehicule.veh_essence / vehicule.veh_tot
         # Save in temporary store
         vehicule.index = vehicule.index.astype(ident_men_dtype)
         temporary_store["automobile_{}".format(year)] = vehicule
@@ -103,8 +93,4 @@ if __name__ == "__main__":
     deb = time.process_time()()
     year = 2005
     build_homogeneisation_vehicules(year=year)
-    log.info(
-        "step 0_2_homogeneisation_vehicules duration is {}".format(
-            time.process_time()() - deb
-        )
-    )
+    log.info("step 0_2_homogeneisation_vehicules duration is {}".format(time.process_time()() - deb))

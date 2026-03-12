@@ -13,29 +13,18 @@ def split_aggregated_poste(df, to_split, new_postes):
     """Ventile les postes agrégés en sous-postes en utilisant d'autres données sur la consommation touristique."""
 
     other_data_tourisme = pd.read_excel(
-        os.path.join(
-            assets_directory, "depenses", "Consommation_touristique_2010_2018.xlsx"
-        ),
+        os.path.join(assets_directory, "depenses", "Consommation_touristique_2010_2018.xlsx"),
         index_col=0,
     )
-    other_data_tourisme["Postes de dépenses"] = other_data_tourisme[
-        "Postes de dépenses"
-    ].str.strip()
+    other_data_tourisme["Postes de dépenses"] = other_data_tourisme["Postes de dépenses"].str.strip()
     total = (
-        other_data_tourisme.loc[
-            other_data_tourisme["Postes de dépenses"].isin(new_postes), [2018]
-        ]
+        other_data_tourisme.loc[other_data_tourisme["Postes de dépenses"].isin(new_postes), [2018]]
         .sum(axis=0)
         .values[0]
     )
 
     for poste in new_postes:
-        share = (
-            other_data_tourisme.loc[
-                other_data_tourisme["Postes de dépenses"] == poste, 2018
-            ].values[0]
-            / total
-        )
+        share = other_data_tourisme.loc[other_data_tourisme["Postes de dépenses"] == poste, 2018].values[0] / total
         df.loc[df.index.max() + 1, "Poste de dépenses"] = poste
         df.loc[df["Poste de dépenses"] == poste, [2019, 2020, 2021, 2022]] = (
             df.loc[df["Poste de dépenses"] == to_split, [2019, 2020, 2021, 2022]]
@@ -70,9 +59,7 @@ postes_tourisme = [
 def get_repartition_depenses_touristique(target_year):
     """Renvoit la répartition des dépenses touristiques entre différents postes de consommation."""
 
-    data_tourisme_file_path = os.path.join(
-        assets_directory, "legislation", "sect-tour-conso-int-conso.xlsx"
-    )
+    data_tourisme_file_path = os.path.join(assets_directory, "legislation", "sect-tour-conso-int-conso.xlsx")
 
     if target_year <= 2019:
         year = 2019
@@ -84,9 +71,7 @@ def get_repartition_depenses_touristique(target_year):
     data_tourisme = pd.read_excel(data_tourisme_file_path, header=[3, 4])
     data_tourisme.set_index([("Poste de dépenses", "Unnamed: 0_level_1")], inplace=True)
     target_label = "Consommation des non-résidents (consommation récepteur)"
-    data_tourisme = data_tourisme.loc[
-        :, data_tourisme.columns.get_level_values(1) == target_label
-    ]
+    data_tourisme = data_tourisme.loc[:, data_tourisme.columns.get_level_values(1) == target_label]
     data_tourisme.columns = data_tourisme.columns.get_level_values(0)
     data_tourisme.reset_index(inplace=True)
     data_tourisme.rename(
@@ -95,14 +80,10 @@ def get_repartition_depenses_touristique(target_year):
         inplace=True,
     )
     data_tourisme["Poste de dépenses"] = data_tourisme["Poste de dépenses"].str.strip()
-    data_tourisme = data_tourisme.loc[
-        data_tourisme["Poste de dépenses"].isin(postes_tourisme),
-    ]
+    data_tourisme = data_tourisme.loc[data_tourisme["Poste de dépenses"].isin(postes_tourisme),]
 
     # On ventile certains postes agrégés
-    data_tourisme = split_aggregated_poste(
-        data_tourisme, "Carburants et péages", ["Carburants", "Péages"]
-    )
+    data_tourisme = split_aggregated_poste(data_tourisme, "Carburants et péages", ["Carburants", "Péages"])
     data_tourisme = split_aggregated_poste(
         data_tourisme,
         "Autres biens de consommation et autres services",
@@ -191,13 +172,9 @@ def calculate_share_cn(liste_poste, cn_df):
 
 def get_correction_territoriale(target_year, masses_cn_postes, liste_postes_cn):
     # On prend le solde territorial dans la compta nat
-    parametres_fiscalite_file_path = os.path.join(
-        assets_directory, "depenses", "conso_eff_fonction_2023.xls"
-    )
+    parametres_fiscalite_file_path = os.path.join(assets_directory, "depenses", "conso_eff_fonction_2023.xls")
 
-    df_cn = pd.read_excel(
-        parametres_fiscalite_file_path, sheet_name="MEURcour", header=4
-    )
+    df_cn = pd.read_excel(parametres_fiscalite_file_path, sheet_name="MEURcour", header=4)
     df_cn.rename(columns={"Unnamed: 0": "Code", "Unnamed: 1": "Label"}, inplace=True)
     df_cn = df_cn.loc[:, ["Code", "{}".format(target_year)]].copy()
     df_cn.loc[df_cn["Code"] == "CP16"]
@@ -207,40 +184,22 @@ def get_correction_territoriale(target_year, masses_cn_postes, liste_postes_cn):
 
     # On ventile le solde territorial  selon cette répartition
     correction_territoriale = pd.DataFrame()
-    correction_territoriale["Solde territorial"] = (
-        percentage_df * solde_territorial.values[0]
-    )
-    correction_territoriale = correction_territoriale.reset_index().rename(
-        {"Poste de dépenses": "Label"}, axis=1
-    )
-    correction_territoriale["Code"] = correction_territoriale["Label"].map(
-        dico_postes_tourisme
-    )
+    correction_territoriale["Solde territorial"] = percentage_df * solde_territorial.values[0]
+    correction_territoriale = correction_territoriale.reset_index().rename({"Poste de dépenses": "Label"}, axis=1)
+    correction_territoriale["Code"] = correction_territoriale["Label"].map(dico_postes_tourisme)
 
-    correction_territoriale["Code"] = correction_territoriale["Code"].apply(
-        lambda x: x if isinstance(x, list) else [x]
-    )
-    correction_territoriale = correction_territoriale.explode("Code").reset_index(
-        drop=True
-    )
+    correction_territoriale["Code"] = correction_territoriale["Code"].apply(lambda x: x if isinstance(x, list) else [x])
+    correction_territoriale = correction_territoriale.explode("Code").reset_index(drop=True)
 
-    liste_poste_01_02 = [
-        element
-        for element in liste_postes_cn
-        if element[:8] in ["poste_01", "poste_02"]
-    ]
-    share_df_1 = calculate_share_cn(
-        liste_poste=liste_poste_01_02, cn_df=masses_cn_postes
-    )
+    liste_poste_01_02 = [element for element in liste_postes_cn if element[:8] in ["poste_01", "poste_02"]]
+    share_df_1 = calculate_share_cn(liste_poste=liste_poste_01_02, cn_df=masses_cn_postes)
     share_df_2 = calculate_share_cn(
         liste_poste=["poste_03_1_1", "poste_03_1_2", "poste_03_2_1"],
         cn_df=masses_cn_postes,
     )
     share_df = pd.concat([share_df_1, share_df_2])
 
-    correction_territoriale = correction_territoriale.merge(
-        share_df, how="left", on="Code"
-    )
+    correction_territoriale = correction_territoriale.merge(share_df, how="left", on="Code")
     correction_territoriale.fillna(1, inplace=True)
     correction_territoriale["Solde territorial"] = (
         correction_territoriale["Solde territorial"] * correction_territoriale["Part"]

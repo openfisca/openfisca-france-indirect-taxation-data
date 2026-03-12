@@ -47,9 +47,7 @@ def histogram_froid_niveau_vie_decile(data_matched, data_enl):
         data_matched_decile = data_matched.query("niveau_vie_decile == {}".format(i))
 
         part_enl = (
-            100
-            * sum(data_enl_decile["pondmen"] * (data_enl_decile["froid"] == 1))
-            / sum(data_enl_decile["pondmen"])
+            100 * sum(data_enl_decile["pondmen"] * (data_enl_decile["froid"] == 1)) / sum(data_enl_decile["pondmen"])
         )
         part_matched = (
             100
@@ -61,9 +59,7 @@ def histogram_froid_niveau_vie_decile(data_matched, data_enl):
         list_values_enl.append(part_enl)
         list_keys.append("{}".format(i))
 
-    figure = histogrammes(
-        list_keys, list_values_matched, list_values_enl, "Matched", "ENL"
-    )
+    figure = histogrammes(list_keys, list_values_matched, list_values_enl, "Matched", "ENL")
 
     return figure
 
@@ -83,10 +79,7 @@ def histogram_froid_cout_niveau_vie_decile(data_matched, data_enl):
         )
         part_matched = (
             100
-            * sum(
-                data_matched_decile["pondmen"]
-                * (data_matched_decile["froid_cout"] == 1)
-            )
+            * sum(data_matched_decile["pondmen"] * (data_matched_decile["froid_cout"] == 1))
             / sum(data_matched_decile["pondmen"])
         )
 
@@ -94,9 +87,7 @@ def histogram_froid_cout_niveau_vie_decile(data_matched, data_enl):
         list_values_enl.append(part_enl)
         list_keys.append("{}".format(i))
 
-    figure = histogrammes(
-        list_keys, list_values_matched, list_values_enl, "Matched", "ENL"
-    )
+    figure = histogrammes(list_keys, list_values_matched, list_values_enl, "Matched", "ENL")
 
     return figure
 
@@ -109,24 +100,16 @@ def histogram_froid_tuu(data_matched, data_enl):
         data_enl_tuu = data_enl.query("tuu == {}".format(i))
         data_matched_tuu = data_matched.query("tuu == {}".format(i))
 
-        part_enl = (
-            100
-            * sum(data_enl_tuu["pondmen"] * (data_enl_tuu["froid"] == 1))
-            / sum(data_enl_tuu["pondmen"])
-        )
+        part_enl = 100 * sum(data_enl_tuu["pondmen"] * (data_enl_tuu["froid"] == 1)) / sum(data_enl_tuu["pondmen"])
         part_matched = (
-            100
-            * sum(data_matched_tuu["pondmen"] * (data_matched_tuu["froid"] == 1))
-            / sum(data_matched_tuu["pondmen"])
+            100 * sum(data_matched_tuu["pondmen"] * (data_matched_tuu["froid"] == 1)) / sum(data_matched_tuu["pondmen"])
         )
 
         list_values_matched.append(part_matched)
         list_values_enl.append(part_enl)
         list_keys.append("{}".format(i))
 
-    figure = histogrammes(
-        list_keys, list_values_matched, list_values_enl, "Matched", "ENL"
-    )
+    figure = histogrammes(list_keys, list_values_matched, list_values_enl, "Matched", "ENL")
 
     return figure
 

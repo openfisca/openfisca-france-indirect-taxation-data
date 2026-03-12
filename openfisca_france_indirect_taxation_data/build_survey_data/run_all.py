@@ -48,9 +48,7 @@ log = logging.getLogger(__name__)
 YEAR_DATA_LIST = (2005, 2011, 2017)
 
 
-@temporary_store_decorator(
-    config_files_directory=config_files_directory, file_name="indirect_taxation_tmp"
-)
+@temporary_store_decorator(config_files_directory=config_files_directory, file_name="indirect_taxation_tmp")
 def run_all_steps(temporary_store=None, year_calage=2017, skip_matching=False):
 
     assert temporary_store is not None
@@ -102,13 +100,11 @@ def run_all_steps(temporary_store=None, year_calage=2017, skip_matching=False):
             )
         )
         assert len(preprocessed_data_frame) != 0, "Empty data frame {}".format(name)
-        assert preprocessed_data_frame.index.dtype == numpy.dtype("O"), (
-            "index for {} is {}".format(name, preprocessed_data_frame.index.dtype)
+        assert preprocessed_data_frame.index.dtype == numpy.dtype("O"), "index for {} is {}".format(
+            name, preprocessed_data_frame.index.dtype
         )
 
-    data_frame = pandas.concat(
-        list(preprocessed_data_frame_by_name.values()), axis=1, sort=True
-    )
+    data_frame = pandas.concat(list(preprocessed_data_frame_by_name.values()), axis=1, sort=True)
     if year_data == 2005:
         nullified_variables = (
             ["veh_tot", "veh_essence", "veh_diesel", "pourcentage_vehicule_essence"]
@@ -200,9 +196,7 @@ def save(data_frame, year_data, year_calage):
     data_frame = data_frame.T.groupby(level=0).first().T
     # Créer un nouvel identifiant pour les ménages
     data_frame["identifiant_menage"] = list(range(0, len(data_frame)))
-    data_frame["identifiant_menage"] = data_frame["identifiant_menage"] + (
-        year_data * 100000
-    )
+    data_frame["identifiant_menage"] = data_frame["identifiant_menage"] + (year_data * 100000)
 
     log.debug("Saving the openfisca indirect taxation input dataframe")
     try:
@@ -216,9 +210,7 @@ def save(data_frame, year_data, year_calage):
             config_files_directory=config_files_directory,
         )
 
-    output_data_directory = openfisca_survey_collection.config.get(
-        "data", "output_directory"
-    )
+    output_data_directory = openfisca_survey_collection.config.get("data", "output_directory")
     survey_name = "openfisca_indirect_taxation_data_{}".format(year_calage)
     table = "input"
     hdf5_file_path = os.path.join(output_data_directory, "{}.h5".format(survey_name))

@@ -19,17 +19,13 @@ data_emp = pd.read_csv(
 )
 
 data_matched_distance = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_emp", "data_matched_distance.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_emp", "data_matched_distance.csv"),
     sep=",",
     decimal=".",
 )
 
 data_matched_random = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_emp", "data_matched_random.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_emp", "data_matched_random.csv"),
     sep=",",
     decimal=".",
 )
@@ -44,33 +40,23 @@ data_matched_rank = pd.read_csv(
 def test_var_niveau_vie_decile(data_emp, data_matched, var):
     results_dict = dict()
     average_emp = sum(data_emp["pondmen"] * (data_emp[var])) / sum(data_emp["pondmen"])
-    average_matched = sum(data_matched["pondmen"] * (data_matched[var])) / sum(
-        data_matched["pondmen"]
-    )
+    average_matched = sum(data_matched["pondmen"] * (data_matched[var])) / sum(data_matched["pondmen"])
     results_dict["Average"] = [average_emp, average_matched]
     for i in range(1, 11):
         data_emp_decile = data_emp.loc[data_emp["niveau_vie_decile"] == i]
         data_matched_decile = data_matched.loc[data_matched["niveau_vie_decile"] == i]
-        part_emp = sum(data_emp_decile["pondmen"] * (data_emp_decile[var])) / sum(
-            data_emp_decile["pondmen"]
+        part_emp = sum(data_emp_decile["pondmen"] * (data_emp_decile[var])) / sum(data_emp_decile["pondmen"])
+        part_matched = sum(data_matched_decile["pondmen"] * (data_matched_decile[var])) / sum(
+            data_matched_decile["pondmen"]
         )
-        part_matched = sum(
-            data_matched_decile["pondmen"] * (data_matched_decile[var])
-        ) / sum(data_matched_decile["pondmen"])
         results_dict["{}".format(i)] = [part_emp, part_matched]
 
     return results_dict
 
 
-test_distance_niveau_vie_decile_distance = test_var_niveau_vie_decile(
-    data_emp, data_matched_distance, var="distance"
-)
-test_distance_niveau_vie_decile_random = test_var_niveau_vie_decile(
-    data_emp, data_matched_random, var="distance"
-)
-test_distance_niveau_vie_decile_rank = test_var_niveau_vie_decile(
-    data_emp, data_matched_rank, var="distance"
-)
+test_distance_niveau_vie_decile_distance = test_var_niveau_vie_decile(data_emp, data_matched_distance, var="distance")
+test_distance_niveau_vie_decile_random = test_var_niveau_vie_decile(data_emp, data_matched_random, var="distance")
+test_distance_niveau_vie_decile_rank = test_var_niveau_vie_decile(data_emp, data_matched_rank, var="distance")
 
 test_distance_diesel_niveau_vie_decile_distance = test_var_niveau_vie_decile(
     data_emp, data_matched_distance, var="distance_diesel"
@@ -114,9 +100,7 @@ plt.ylabel("Average annual distance (in km)", size=14)
 plt.title("Comparison between EMP and matched dataset", size=16)
 plt.legend()
 plt.grid(True, linestyle="--", alpha=0.7)
-plt.savefig(
-    os.path.join(output_path, "Matching_bdf_emp/bar_plot_distance_matched_decile.pdf")
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/bar_plot_distance_matched_decile.pdf"))
 plt.close()
 
 # Density plot distance annuelle
@@ -130,19 +114,13 @@ plt.ylabel("Density", size=14)
 plt.title("Distribution of annual distance traveled", size=16)
 plt.legend(["Matched", "EMP"], fontsize=14)
 plt.grid(True, linestyle="--", alpha=0.7)
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Compare_distance_density_distribution.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Compare_distance_density_distribution.pdf"))
 plt.close()
 
 # Cumulative distribution distance annuelle
 
 plt.figure(figsize=(10, 6))
-sns.kdeplot(
-    data=data_emp, x="distance", weights="pondmen", cumulative=True, bw_adjust=0.7
-)
+sns.kdeplot(data=data_emp, x="distance", weights="pondmen", cumulative=True, bw_adjust=0.7)
 sns.kdeplot(
     data=data_matched_distance,
     x="distance",
@@ -157,11 +135,7 @@ plt.ylabel("Cumulative proportion", size=14)
 plt.title("Cumulative distribution of annual distance traveled", size=16)
 plt.legend(["Matched", "EMP"], fontsize=14)
 plt.grid(True, linestyle="--", alpha=0.7)
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Compare_distance_cumulative_distribution.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Compare_distance_cumulative_distribution.pdf"))
 plt.close()
 
 # By income decile
@@ -179,9 +153,7 @@ for i, ax in enumerate(axes.flat):
         ax=ax,
     )
     sns.kdeplot(
-        data=data_matched_distance.loc[
-            data_matched_distance["niveau_vie_decile"] == decile
-        ],
+        data=data_matched_distance.loc[data_matched_distance["niveau_vie_decile"] == decile],
         x="distance",
         weights="pondmen",
         bw_adjust=0.7,
@@ -201,11 +173,7 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Distance_density_distribution_by_decile.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Distance_density_distribution_by_decile.pdf"))
 plt.close()
 
 # Cumulative distribution
@@ -223,9 +191,7 @@ for i, ax in enumerate(axes.flat):
         cumulative=True,
     )
     sns.kdeplot(
-        data=data_matched_distance.loc[
-            data_matched_distance["niveau_vie_decile"] == decile
-        ],
+        data=data_matched_distance.loc[data_matched_distance["niveau_vie_decile"] == decile],
         x="distance",
         weights="pondmen",
         bw_adjust=0.7,
@@ -245,11 +211,7 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Distance_cumulative_distribution_by_decile.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Distance_cumulative_distribution_by_decile.pdf"))
 plt.close()
 
 # By urban categories
@@ -293,9 +255,5 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Distance_density_distribution_by_urban_cat.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Distance_density_distribution_by_urban_cat.pdf"))
 plt.close()

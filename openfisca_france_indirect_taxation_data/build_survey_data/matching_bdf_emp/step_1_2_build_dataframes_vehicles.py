@@ -22,9 +22,7 @@ def load_data_vehicules_bdf_emp(year_data):
     emp_survey_collection = SurveyCollection.load(
         collection="enquete_transports", config_files_directory=config_files_directory
     )
-    survey_emp = emp_survey_collection.get_survey(
-        "enquete_transports_{}".format(year_emp)
-    )
+    survey_emp = emp_survey_collection.get_survey("enquete_transports_{}".format(year_emp))
     input_emp_vehicule = survey_emp.get_values(table="q_voitvul_public_V2")
     input_emp_menage = survey_emp.get_values(table="q_menage_public_V2")
 
@@ -32,12 +30,8 @@ def load_data_vehicules_bdf_emp(year_data):
 
     year_bdf = year_data
 
-    openfisca_survey_collection = SurveyCollection.load(
-        collection="budget_des_familles"
-    )
-    openfisca_survey = openfisca_survey_collection.get_survey(
-        "budget_des_familles_{}".format(year_bdf)
-    )
+    openfisca_survey_collection = SurveyCollection.load(collection="budget_des_familles")
+    openfisca_survey = openfisca_survey_collection.get_survey("budget_des_familles_{}".format(year_bdf))
     input_bdf = openfisca_survey.get_values(table="AUTOMOBILE")
     input_bdf.reset_index(inplace=True)
 
@@ -179,9 +173,7 @@ def imputation_carburants(df, var_carbu, var_nb_vehicule, weight_col):
     df.loc[
         df[var_carbu].isna() & df["prop_essence"].isna() & df[var_nb_vehicule] > 0,
         "var_imputee",
-    ] = df.loc[
-        df[var_carbu].isna() & df["prop_essence"].isna() & df[var_nb_vehicule] > 0
-    ].apply(
+    ] = df.loc[df[var_carbu].isna() & df["prop_essence"].isna() & df[var_nb_vehicule] > 0].apply(
         lambda row: np.random.choice(
             [1, 2, 6],
             p=[
@@ -214,18 +206,14 @@ def merge_vehicule_menage(year_data):
 
     data_bdf, data_emp, data_emp_menage = load_data_vehicules_bdf_emp(2017)
     data_emp_full = data_emp_menage.merge(data_emp, on="ident_men", how="left")
-    data_emp_full = imputation_carburants(
-        data_emp_full, "energie_agrege", "jnbveh", "pond_menc"
-    )
+    data_emp_full = imputation_carburants(data_emp_full, "energie_agrege", "jnbveh", "pond_menc")
     year_data = 2017
 
     # Calcul de l'âge du véhicule
     data_emp_full["anvoi"] = pd.to_numeric(data_emp_full["annee_1mec"], errors="coerce")
 
     data_emp_full["age_vehicule"] = 0
-    data_emp_full.loc[data_emp_full["anvoi"] != 0, "age_vehicule"] = (
-        2019 - data_emp_full["anvoi"]
-    )
+    data_emp_full.loc[data_emp_full["anvoi"] != 0, "age_vehicule"] = 2019 - data_emp_full["anvoi"]
 
     data_bdf["anvoi"] = data_bdf["anvoi"].fillna(0).astype(int)
     data_bdf["age_vehicule"] = 0
@@ -241,9 +229,7 @@ def merge_vehicule_menage(year_data):
 
     if year_data == 2017:
         carbu_cols = ["carbu1", "carbu2", "carbu3", "carbu4", "carbu5"]
-        data_bdf["carbu"] = (
-            data_bdf[carbu_cols].idxmax(axis=1).str.extract(r"(\d)").astype(int)
-        )
+        data_bdf["carbu"] = data_bdf[carbu_cols].idxmax(axis=1).str.extract(r"(\d)").astype(int)
         data_bdf.drop(carbu_cols, axis=1, inplace=True)
 
     data_bdf["essence"] = 0
@@ -255,17 +241,11 @@ def merge_vehicule_menage(year_data):
 
     # déf des distances parcourues par carburant
     data_emp_full["distance_essence"] = 0.0
-    data_emp_full.loc[data_emp_full["essence"] == 1, "distance_essence"] = (
-        data_emp_full["kvkm1anv"]
-    )
+    data_emp_full.loc[data_emp_full["essence"] == 1, "distance_essence"] = data_emp_full["kvkm1anv"]
     data_emp_full["distance_diesel"] = 0.0
-    data_emp_full.loc[data_emp_full["diesel"] == 1, "distance_diesel"] = data_emp_full[
-        "kvkm1anv"
-    ]
+    data_emp_full.loc[data_emp_full["diesel"] == 1, "distance_diesel"] = data_emp_full["kvkm1anv"]
     data_emp_full["distance_autre_carbu"] = 0.0
-    data_emp_full.loc[data_emp_full["autre_carbu"] == 1, "distance_autre_carbu"] = (
-        data_emp_full["kvkm1anv"]
-    )
+    data_emp_full.loc[data_emp_full["autre_carbu"] == 1, "distance_autre_carbu"] = data_emp_full["kvkm1anv"]
 
     # Df avec le nombre de véhicule et les distances pour chaque type de carburant
     data_vehicule_emp = (

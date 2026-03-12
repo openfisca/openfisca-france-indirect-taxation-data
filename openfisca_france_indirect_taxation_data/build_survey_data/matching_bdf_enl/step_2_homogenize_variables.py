@@ -179,18 +179,12 @@ def homogenize_variables_definition_bdf_enl(year_data):
     part_electricite_enl = joint_data_enl["coml11"].sum() / (
         joint_data_enl["coml11"].sum() + joint_data_enl["coml12"].sum()
     )
-    data_enl["depenses_electricite"] = (
-        data_enl["coml11"] + data_enl["coml13"] * part_electricite_enl
-    )
-    data_enl["depenses_gaz_ville"] = data_enl["coml12"] + data_enl["coml13"] * (
-        1 - part_electricite_enl
-    )
+    data_enl["depenses_electricite"] = data_enl["coml11"] + data_enl["coml13"] * part_electricite_enl
+    data_enl["depenses_gaz_ville"] = data_enl["coml12"] + data_enl["coml13"] * (1 - part_electricite_enl)
 
     data_enl["poste_04_5_1_1_1"] = (data_enl["coml11"]).copy()
 
-    data_enl["depenses_combustibles_solides"] = (
-        data_enl["coml41"] + data_enl["coml42"]
-    ).copy()
+    data_enl["depenses_combustibles_solides"] = (data_enl["coml41"] + data_enl["coml42"]).copy()
 
     del data_enl["coml41"], data_enl["coml42"]
 
@@ -227,10 +221,8 @@ def homogenize_variables_definition_bdf_enl(year_data):
         "tu2010": "tuu",
     }
 
-    assert set(renaming.keys()) < set(data_enl.columns), (
-        "Missing {} in data_enl".format(
-            set(renaming.keys()).difference(set(data_enl.columns))
-        )
+    assert set(renaming.keys()) < set(data_enl.columns), "Missing {} in data_enl".format(
+        set(renaming.keys()).difference(set(data_enl.columns))
     )
     data_enl.rename(
         columns=renaming,
@@ -365,9 +357,7 @@ def create_new_variables(year_data):
             data["depenses_energies"] = 0
             for energie in energie_logement:
                 data["depenses_energies"] += data[energie]
-            data["part_energies_depenses_tot"] = (
-                data["depenses_energies"] / data["depenses_tot"]
-            )
+            data["part_energies_depenses_tot"] = data["depenses_energies"] / data["depenses_tot"]
 
         assert "depenses_energies" in data
         assert "revtot" in data
@@ -379,9 +369,7 @@ def create_new_variables(year_data):
 
         return data
 
-    return create_new_variables_(data_enl, option="enl"), create_new_variables_(
-        data_bdf, option="bdf"
-    )
+    return create_new_variables_(data_enl, option="enl"), create_new_variables_(data_bdf, option="bdf")
 
 
 def create_niveau_vie_quantiles(year_data):
@@ -412,9 +400,7 @@ def create_niveau_vie_quantiles(year_data):
         del data["sum_pondmen"]
         return data
 
-    return create_niveau_vie_quantiles_(data_enl), create_niveau_vie_quantiles_(
-        data_bdf
-    )
+    return create_niveau_vie_quantiles_(data_enl), create_niveau_vie_quantiles_(data_bdf)
 
 
 if __name__ == "__main__":

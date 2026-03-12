@@ -69,18 +69,12 @@ def build_complete_coicop_nomenclature(year=2016, to_csv=True):
         )
 
         # Concatenate once and sort
-        coicop_nomenclature = pd.concat(
-            [coicop_nomenclature, extra_data], ignore_index=True
-        )
-        coicop_nomenclature = coicop_nomenclature.sort_values(
-            "code_coicop"
-        ).reset_index(drop=True)
+        coicop_nomenclature = pd.concat([coicop_nomenclature, extra_data], ignore_index=True)
+        coicop_nomenclature = coicop_nomenclature.sort_values("code_coicop").reset_index(drop=True)
 
     # Optionally save
     if to_csv:
-        coicop_nomenclature.to_csv(
-            os.path.join(legislation_directory, "coicop_nomenclature.csv"), index=False
-        )
+        coicop_nomenclature.to_csv(os.path.join(legislation_directory, "coicop_nomenclature.csv"), index=False)
 
     return coicop_nomenclature[
         [

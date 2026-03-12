@@ -27,9 +27,7 @@ def histogram_cat_variable(
     matplotlib.pyplot
         Figure contenant l'histogramme.
     """
-    categories = set(data_bdf[var].dropna().unique()).union(
-        set(data_emp[var].dropna().unique())
-    )
+    categories = set(data_bdf[var].dropna().unique()).union(set(data_emp[var].dropna().unique()))
     list_values_bdf = []
     list_values_emp = []
     list_keys = []
@@ -38,14 +36,8 @@ def histogram_cat_variable(
     list_keys = [str(cat) for cat in categories]
     for cat in categories:
         # Calcul des proportions pondérées pour chaque catégorie
-        part_bdf = (
-            data_bdf.loc[data_bdf[var] == cat, "pondmen"].sum()
-            / data_bdf["pondmen"].sum()
-        )
-        part_emp = (
-            data_emp.loc[data_emp[var] == cat, "pondmen"].sum()
-            / data_emp["pondmen"].sum()
-        )
+        part_bdf = data_bdf.loc[data_bdf[var] == cat, "pondmen"].sum() / data_bdf["pondmen"].sum()
+        part_emp = data_emp.loc[data_emp[var] == cat, "pondmen"].sum() / data_emp["pondmen"].sum()
         list_values_bdf.append(part_bdf)
         list_values_emp.append(part_emp)
 
@@ -55,9 +47,7 @@ def histogram_cat_variable(
     # Ajout des labels et titres
     plt.xlabel(f"Catégories de {var}")
     plt.ylabel("Proportion pondérée")
-    plt.title(
-        f"Comparaison des catégories de {var} entre {data_name_1} et {data_name_2}"
-    )
+    plt.title(f"Comparaison des catégories de {var} entre {data_name_1} et {data_name_2}")
 
     plt.grid(True, linestyle="--", alpha=0.7)
     if savefig and filename is not None:

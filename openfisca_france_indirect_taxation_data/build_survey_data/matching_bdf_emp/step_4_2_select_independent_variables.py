@@ -18,11 +18,7 @@ from openfisca_france_indirect_taxation.build_survey_data.matching_bdf_emp.step_
 data_emp = create_niveau_vie_quantiles()[1]
 
 data_emp["niveau_vie_2"] = data_emp["niveau_vie"] ** 2
-data_emp["distance"] = (
-    data_emp["distance_diesel"]
-    + data_emp["distance_essence"]
-    + data_emp["distance_autre_carbu"]
-)
+data_emp["distance"] = data_emp["distance_diesel"] + data_emp["distance_essence"] + data_emp["distance_autre_carbu"]
 
 stock_variables = [
     "agepr",

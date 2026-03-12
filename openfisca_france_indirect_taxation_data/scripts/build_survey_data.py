@@ -36,9 +36,7 @@ def main():
         default=False,
         help="increase output verbosity",
     )
-    parser.add_argument(
-        "-d", "--debug", action="store_true", default=False, help="use python debugger"
-    )
+    parser.add_argument("-d", "--debug", action="store_true", default=False, help="use python debugger")
     parser.add_argument(
         "-s",
         "--skip-matching",
@@ -48,9 +46,7 @@ def main():
     )
 
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.WARNING, stream=sys.stdout
-    )
+    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.WARNING, stream=sys.stdout)
 
     start_time = datetime.datetime.now()
     years_calage = [int(year) for year in args.years]
@@ -62,11 +58,7 @@ def main():
             pdb.post_mortem(sys.exc_info()[2])
         raise e
 
-    log.info(
-        "The program has been executed in {}".format(
-            datetime.datetime.now() - start_time
-        )
-    )
+    log.info("The program has been executed in {}".format(datetime.datetime.now() - start_time))
     return 0
 
 

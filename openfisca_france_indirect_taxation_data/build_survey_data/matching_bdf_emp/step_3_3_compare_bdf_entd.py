@@ -31,15 +31,10 @@ matching_varlist = [
     "veh_tot",
 ]
 hellinger_distances = {
-    var: hellinger_distance(data_bdf, data_emp, var=var, weight_col="pondmen")[2]
-    for var in matching_varlist
+    var: hellinger_distance(data_bdf, data_emp, var=var, weight_col="pondmen")[2] for var in matching_varlist
 }
-df_hellinger_distance = pd.DataFrame(
-    hellinger_distances.items(), columns=["Variable", "Hellinger Distance"]
-)
-df_hellinger_distance.to_csv(
-    os.path.join(output_path, "hellinger_distances.csv"), index=False
-)
+df_hellinger_distance = pd.DataFrame(hellinger_distances.items(), columns=["Variable", "Hellinger Distance"])
+df_hellinger_distance.to_csv(os.path.join(output_path, "hellinger_distances.csv"), index=False)
 
 
 for var in ["agepr", "age_vehicule", "ocde10"]:

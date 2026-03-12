@@ -72,14 +72,11 @@ def create_donation_classes(year_data):
             if i < 5:
                 for j in [0, 1]:
                     data.loc[
-                        (data["aides_logement"] == j)
-                        & (data["niveau_vie_decile"] == i),
+                        (data["aides_logement"] == j) & (data["niveau_vie_decile"] == i),
                         "donation_class_1",
                     ] = "{}_{}".format(i, j)
             else:
-                data.loc[data["niveau_vie_decile"] == i, "donation_class_1"] = (
-                    "{}".format(i)
-                )
+                data.loc[data["niveau_vie_decile"] == i, "donation_class_1"] = "{}".format(i)
 
         # Classes based on niveau_vie_decile, aides_logement, and log_indiv
         data["donation_class_2"] = 0
@@ -162,14 +159,10 @@ def prepare_bdf_enl_matching_data(year_data):
 
     # Sauvegarde des données dans des fichiers .csv
     data_enl.to_csv(
-        os.path.join(
-            assets_directory, "matching", "matching_enl", "data_matching_enl.csv"
-        ),
+        os.path.join(assets_directory, "matching", "matching_enl", "data_matching_enl.csv"),
         sep=",",
     )
     data_bdf.to_csv(
-        os.path.join(
-            assets_directory, "matching", "matching_enl", "data_matching_bdf.csv"
-        ),
+        os.path.join(assets_directory, "matching", "matching_enl", "data_matching_bdf.csv"),
         sep=",",
     )

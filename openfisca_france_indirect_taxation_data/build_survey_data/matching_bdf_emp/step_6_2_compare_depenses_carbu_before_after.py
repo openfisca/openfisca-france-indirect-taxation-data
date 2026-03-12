@@ -13,9 +13,7 @@ sns_set2_orange = color_list[1]
 output_path = "C:/Users/veve1/OneDrive/Documents/ENSAE PhD/Carbon tax/Output/Figures"
 
 data_matched = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_emp", "data_matched_final.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_emp", "data_matched_final.csv"),
     sep=",",
     decimal=".",
 )
@@ -41,10 +39,7 @@ def histogram_depenses_annuelle_group(data_matched, group):
 
         data_matched_group = data_matched.query("{} == {}".format(group, element))
         depenses_carburants = (
-            sum(
-                data_matched_group["depenses_carburants_corrigees_emp"]
-                * data_matched_group["pondmen"]
-            )
+            sum(data_matched_group["depenses_carburants_corrigees_emp"] * data_matched_group["pondmen"])
             / data_matched_group["pondmen"].sum()
         )
 
@@ -68,9 +63,7 @@ def histogram_distribution_depenses_annuelle(data_matched):
     list_keys = []
     for i in [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]:
         list_values_poste.append(data_matched["poste_07_2_2_1"].quantile(i))
-        list_values_depenses_carburants.append(
-            data_matched["depenses_carburants_corrigees_emp"].quantile(i)
-        )
+        list_values_depenses_carburants.append(data_matched["depenses_carburants_corrigees_emp"].quantile(i))
         list_keys.append("{}".format(i))
 
     figure = histogrammes(
@@ -89,9 +82,7 @@ histogram_distribution_depenses_annuelle(data_matched)
 
 # Depenses carburants density
 plt.figure(figsize=(10, 6))
-sns.kdeplot(
-    data=data_matched, x="poste_07_2_2_1", weights="pondmen", bw_adjust=0.7, color="b"
-)
+sns.kdeplot(data=data_matched, x="poste_07_2_2_1", weights="pondmen", bw_adjust=0.7, color="b")
 sns.kdeplot(
     data=data_matched,
     x="depenses_carburants_corrigees_emp",
@@ -106,11 +97,7 @@ plt.ylabel("Density", size=14)
 plt.title("Distribution of annual fuel expenditures", size=16)
 plt.legend(["BDF", "Matched"], fontsize=14)
 plt.grid(True, linestyle="--", alpha=0.5)
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Compare_depenses_density_distribution.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Compare_depenses_density_distribution.pdf"))
 plt.close()
 
 # Depenses carburants cumulative distribution
@@ -138,11 +125,7 @@ plt.ylabel("Cumulative proportion", size=14)
 plt.title("Cumulative distribution of annual fuel expenditures", size=16)
 plt.legend(["BDF", "Matched"], fontsize=14)
 plt.grid(True, linestyle="--", alpha=0.5)
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Compare_depenses_cumulative_distribution.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Compare_depenses_cumulative_distribution.pdf"))
 plt.close()
 
 # Depenses carburants density by income decile
@@ -177,11 +160,7 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Depenses_density_distribution_by_decile.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Depenses_density_distribution_by_decile.pdf"))
 plt.close()
 
 # Cumulative distribution
@@ -221,11 +200,7 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Depenses_cumulative_distribution_by_decile.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Depenses_cumulative_distribution_by_decile.pdf"))
 plt.close()
 
 # By urban categories
@@ -271,9 +246,5 @@ for i, ax in enumerate(axes.flat):
 fig.align_labels()
 fig.align_titles()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(
-    os.path.join(
-        output_path, "Matching_bdf_emp/Depenses_density_distribution_by_urban_cat.pdf"
-    )
-)
+plt.savefig(os.path.join(output_path, "Matching_bdf_emp/Depenses_density_distribution_by_urban_cat.pdf"))
 plt.close()

@@ -46,3 +46,10 @@ namespaces = true
 
 [tool.bdist_wheel]
 universal = true
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    ".git",
+    "__pycache__",
+]

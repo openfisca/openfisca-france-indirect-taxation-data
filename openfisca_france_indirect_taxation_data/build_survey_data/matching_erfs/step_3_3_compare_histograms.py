@@ -43,9 +43,7 @@ def histogram_cataeu():
         del data_bdf["pondmen_{}".format(i)]
 
         data_erfs["pondmen_{}".format(i)] = 0
-        data_erfs["pondmen_{}".format(i)].loc[data_erfs.cataeu == i] = data_erfs[
-            "pondmen"
-        ]
+        data_erfs["pondmen_{}".format(i)].loc[data_erfs.cataeu == i] = data_erfs["pondmen"]
         part_erfs = data_erfs["pondmen_{}".format(i)].sum() / data_erfs["pondmen"].sum()
         del data_erfs["pondmen_{}".format(i)]
 
@@ -67,16 +65,12 @@ def histogram_nactifs():
     list_keys = []
     for i in [0, 1, 2, 3, 4, 5, 6]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_erfs["pondmen_{}".format(i)] = 0
-        data_erfs["pondmen_{}".format(i)].loc[data_erfs["nactifs"] == i] = data_erfs[
-            "pondmen"
-        ]
+        data_erfs["pondmen_{}".format(i)].loc[data_erfs["nactifs"] == i] = data_erfs["pondmen"]
         part_erfs = data_erfs["pondmen_{}".format(i)].sum() / data_erfs["pondmen"].sum()
         del data_erfs["pondmen_{}".format(i)]
 
@@ -103,9 +97,7 @@ def histogram_ocde10():
         del data_bdf["pondmen_{}".format(i)]
 
         data_erfs["pondmen_{}".format(i)] = 0
-        data_erfs["pondmen_{}".format(i)].loc[data_erfs.ocde10 == i] = data_erfs[
-            "pondmen"
-        ]
+        data_erfs["pondmen_{}".format(i)].loc[data_erfs.ocde10 == i] = data_erfs["pondmen"]
         part_erfs = data_erfs["pondmen_{}".format(i)].sum() / data_erfs["pondmen"].sum()
         del data_erfs["pondmen_{}".format(i)]
 
@@ -322,9 +314,7 @@ def histogram_typmen():
         del data_bdf["pondmen_{}".format(i)]
 
         data_erfs["pondmen_{}".format(i)] = 0
-        data_erfs["pondmen_{}".format(i)].loc[data_erfs.typmen == i] = data_erfs[
-            "pondmen"
-        ]
+        data_erfs["pondmen_{}".format(i)].loc[data_erfs.typmen == i] = data_erfs["pondmen"]
         part_erfs = data_erfs["pondmen_{}".format(i)].sum() / data_erfs["pondmen"].sum()
         del data_erfs["pondmen_{}".format(i)]
 

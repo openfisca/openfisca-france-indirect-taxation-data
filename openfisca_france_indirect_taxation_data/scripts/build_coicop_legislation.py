@@ -101,9 +101,7 @@ def apply_modification(
     assert categorie_fiscale in list(taxe_by_categorie_fiscale_number.values()), (
         f"Catégorie fiscale invalide: {categorie_fiscale}."
     )
-    assert 1994 <= start < stop <= 2024, (
-        f"Intervalle invalide: start={start}, stop={stop}."
-    )
+    assert 1994 <= start < stop <= 2024, f"Intervalle invalide: start={start}, stop={stop}."
 
     # Détermine la sélection en fonction du type de `value`
     if isinstance(value, int):
@@ -121,23 +119,19 @@ def apply_modification(
 
     if selection.any():
         # Vérifie si les colonnes 'start' et 'stop' sont déjà remplies
-        filled_start_stop = (
-            coicop_nomenclature.loc[selection, "start"] != 0
-        ).any() or (coicop_nomenclature.loc[selection, "stop"] != 0).any()
+        filled_start_stop = (coicop_nomenclature.loc[selection, "start"] != 0).any() or (
+            coicop_nomenclature.loc[selection, "stop"] != 0
+        ).any()
         if not filled_start_stop:
             # Cas 1: Aucune période définie, on initialise
-            coicop_nomenclature.loc[
-                selection, ["start", "stop", "categorie_fiscale"]
-            ] = 1994, 2024, categorie_fiscale
+            coicop_nomenclature.loc[selection, ["start", "stop", "categorie_fiscale"]] = 1994, 2024, categorie_fiscale
         else:
             #  Vérifie les chevauchements
             equal_start = coicop_nomenclature["start"] == start
             equal_stop = coicop_nomenclature["stop"] == stop
 
             overlap_selection = (
-                selection
-                & (coicop_nomenclature["start"] <= start)
-                & (coicop_nomenclature["stop"] >= stop)
+                selection & (coicop_nomenclature["start"] <= start) & (coicop_nomenclature["stop"] >= stop)
             )
 
             if overlap_selection.any():
@@ -148,9 +142,7 @@ def apply_modification(
                         "categorie_fiscale",
                     ] = categorie_fiscale
                     if origin is not None:
-                        coicop_nomenclature.loc[
-                            overlap_selection & equal_start & equal_stop, "origin"
-                        ] = origin
+                        coicop_nomenclature.loc[overlap_selection & equal_start & equal_stop, "origin"] = origin
                 elif (overlap_selection & equal_start).any():
                     # Chevauchement au début: découpe l'intervalle existant
                     coicop_nomenclature = _handle_overlap_start(
@@ -191,9 +183,7 @@ def apply_modification(
                 }
             ]
         )
-        coicop_nomenclature = pd.concat(
-            [coicop_nomenclature, new_row], ignore_index=True
-        )
+        coicop_nomenclature = pd.concat([coicop_nomenclature, new_row], ignore_index=True)
         coicop_nomenclature.sort_values(by="code_coicop", inplace=True)
 
     return coicop_nomenclature
@@ -514,9 +504,7 @@ def add_fiscal_categories_to_coicop_nomenclature(coicop_nomenclature, to_csv=Fal
             for single_value in value:
                 single_rule = rule.copy()
                 single_rule["value"] = single_value
-                coicop_nomenclature = apply_modification(
-                    coicop_nomenclature, **single_rule
-                )
+                coicop_nomenclature = apply_modification(coicop_nomenclature, **single_rule)
         else:
             # Sinon, applique la règle normalement
             coicop_nomenclature = apply_modification(coicop_nomenclature, **rule)
@@ -524,9 +512,7 @@ def add_fiscal_categories_to_coicop_nomenclature(coicop_nomenclature, to_csv=Fal
     # Sauvegarde le résultat dans un fichier CSV si demandé
     if to_csv:
         output_path = os.path.join(legislation_directory, "coicop_legislation.csv")
-        os.makedirs(
-            os.path.dirname(output_path), exist_ok=True
-        )  # Crée le répertoire s'il n'existe pas
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Crée le répertoire s'il n'existe pas
         coicop_nomenclature.to_csv(output_path, index=False)
 
     return coicop_nomenclature
@@ -566,18 +552,9 @@ def get_categorie_fiscale(value, year=None, assertion_error=True):
 
     # Filtre par année si nécessaire
     if year is not None:
-        if (
-            "start" not in coicop_nomenclature.columns
-            or "stop" not in coicop_nomenclature.columns
-        ):
-            raise ValueError(
-                "Les colonnes 'start' ou 'stop' ne sont pas présentes dans le DataFrame."
-            )
-        selection = (
-            selection
-            & (coicop_nomenclature.start <= year)
-            & (year <= coicop_nomenclature.stop)
-        )
+        if "start" not in coicop_nomenclature.columns or "stop" not in coicop_nomenclature.columns:
+            raise ValueError("Les colonnes 'start' ou 'stop' ne sont pas présentes dans le DataFrame.")
+        selection = selection & (coicop_nomenclature.start <= year) & (year <= coicop_nomenclature.stop)
 
     # Récupère les catégories fiscales
     categorie_fiscale = coicop_nomenclature.loc[selection, "categorie_fiscale"].unique()
@@ -589,9 +566,7 @@ def get_categorie_fiscale(value, year=None, assertion_error=True):
     # Gestion des cas multiples
     if assertion_error:
         if len(categorie_fiscale) > 1:
-            raise AssertionError(
-                f"La catégorie fiscale n'est pas unique pour {value}. Candidates: {categorie_fiscale}"
-            )
+            raise AssertionError(f"La catégorie fiscale n'est pas unique pour {value}. Candidates: {categorie_fiscale}")
         return categorie_fiscale[0]
     else:
         return categorie_fiscale
@@ -599,16 +574,12 @@ def get_categorie_fiscale(value, year=None, assertion_error=True):
 
 def test_coicop_legislation():
     coicop_nomenclature = build_coicop_nomenclature.build_complete_coicop_nomenclature()
-    coicop_legislation = add_fiscal_categories_to_coicop_nomenclature(
-        coicop_nomenclature, to_csv=False
-    )
+    coicop_legislation = add_fiscal_categories_to_coicop_nomenclature(coicop_nomenclature, to_csv=False)
     if coicop_legislation.categorie_fiscale.isnull().any():
         return coicop_legislation.loc[coicop_legislation.categorie_fiscale.isnull()]
 
 
 if __name__ == "__main__":
     coicop_nomenclature = build_coicop_nomenclature.build_complete_coicop_nomenclature()
-    coicop_nomenclature = add_fiscal_categories_to_coicop_nomenclature(
-        coicop_nomenclature, to_csv=True
-    )
+    coicop_nomenclature = add_fiscal_categories_to_coicop_nomenclature(coicop_nomenclature, to_csv=True)
     test_coicop_legislation()

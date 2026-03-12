@@ -19,17 +19,13 @@ data_emp = pd.read_csv(
 )
 
 data_matched_distance = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_emp", "data_matched_distance.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_emp", "data_matched_distance.csv"),
     sep=",",
     decimal=".",
 )
 
 data_matched_random = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_emp", "data_matched_random.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_emp", "data_matched_random.csv"),
     sep=",",
     decimal=".",
 )

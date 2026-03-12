@@ -21,29 +21,22 @@ def load_data_menages_bdf_emp(year_data):
     emp_survey_collection = SurveyCollection.load(
         collection="enquete_transports", config_files_directory=config_files_directory
     )
-    survey_emp = emp_survey_collection.get_survey(
-        "enquete_transports_{}".format(year_emp)
-    )
+    survey_emp = emp_survey_collection.get_survey("enquete_transports_{}".format(year_emp))
 
     input_emp_tcm_menage = survey_emp.get_values(table="tcm_men_public_V2")
     input_emp_menage = survey_emp.get_values(table="q_menage_public_V2")
 
     # Load BdF data :
     year_bdf = year_data
-    openfisca_survey_collection = SurveyCollection.load(
-        collection="openfisca_indirect_taxation"
-    )
-    openfisca_survey = openfisca_survey_collection.get_survey(
-        "openfisca_indirect_taxation_data_{}".format(year_bdf)
-    )
+    openfisca_survey_collection = SurveyCollection.load(collection="openfisca_indirect_taxation")
+    openfisca_survey = openfisca_survey_collection.get_survey("openfisca_indirect_taxation_data_{}".format(year_bdf))
     input_bdf = openfisca_survey.get_values(table="input")
     input_bdf.reset_index(inplace=True)
 
     # Create variable for total spending
     liste_variables = input_bdf.columns.tolist()
     postes_agreges = [
-        "poste_{}".format(index)
-        for index in ["0{}".format(i) for i in range(1, 10)] + ["10", "11", "12", "13"]
+        "poste_{}".format(index) for index in ["0{}".format(i) for i in range(1, 10)] + ["10", "11", "12", "13"]
     ]
     input_bdf["depenses_tot"] = 0
     for element in liste_variables:

@@ -17,29 +17,19 @@ def load_data_bdf_erfs(year_data):
     # Load ERFS data
     year_erfs = 2017  # modifié Hervé 23/06/2023
 
-    erfs_survey_collection = SurveyCollection.load(
-        collection="erfs_fpr", config_files_directory=config_files_directory
-    )
+    erfs_survey_collection = SurveyCollection.load(collection="erfs_fpr", config_files_directory=config_files_directory)
     survey_erfs = erfs_survey_collection.get_survey("erfs_fpr_{}".format(year_erfs))
 
-    revenus_erfs = survey_erfs.get_values(
-        table="fpr_menage_2017"
-    )  # modifié Hervé 23/06/2023
-    menages_erfs = survey_erfs.get_values(
-        table="fpr_mrf17e17t4"
-    )  # modifié Hervé 23/06/2023
+    revenus_erfs = survey_erfs.get_values(table="fpr_menage_2017")  # modifié Hervé 23/06/2023
+    menages_erfs = survey_erfs.get_values(table="fpr_mrf17e17t4")  # modifié Hervé 23/06/2023
 
     menages_erfs = pandas.merge(revenus_erfs, menages_erfs, on="ident")
 
     # Load BdF data
     year_bdf = year_data
 
-    openfisca_survey_collection = SurveyCollection.load(
-        collection="openfisca_indirect_taxation"
-    )
-    openfisca_survey = openfisca_survey_collection.get_survey(
-        "openfisca_indirect_taxation_data_{}".format(year_bdf)
-    )
+    openfisca_survey_collection = SurveyCollection.load(collection="openfisca_indirect_taxation")
+    openfisca_survey = openfisca_survey_collection.get_survey("openfisca_indirect_taxation_data_{}".format(year_bdf))
     input_bdf = openfisca_survey.get_values(table="input")
     input_bdf.reset_index(inplace=True)
 
@@ -47,9 +37,7 @@ def load_data_bdf_erfs(year_data):
     bdf_survey_collection = SurveyCollection.load(
         collection="budget_des_familles", config_files_directory=config_files_directory
     )
-    survey_bdf = bdf_survey_collection.get_survey(
-        "budget_des_familles_{}".format(year_bdf)
-    )
+    survey_bdf = bdf_survey_collection.get_survey("budget_des_familles_{}".format(year_bdf))
     menages_bdf = survey_bdf.get_values(table="menage", ignorecase=True)
     menages_bdf["ident_men"] = menages_bdf["ident_men"].astype(str)
 

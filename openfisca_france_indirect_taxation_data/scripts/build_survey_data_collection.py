@@ -21,9 +21,7 @@ raw_data_ini = os.path.join(openfisca_france_indirect_taxation_location, "raw_da
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "config", default=raw_data_ini, help="path of configuration file", nargs="?"
-    )
+    parser.add_argument("config", default=raw_data_ini, help="path of configuration file", nargs="?")
     parser.add_argument(
         "-c",
         "--collection",
@@ -53,9 +51,7 @@ def main():
         help="increase output verbosity",
     )
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.WARNING, stream=sys.stdout
-    )
+    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.WARNING, stream=sys.stdout)
 
     config_parser = configparser.SafeConfigParser()
     config_parser.read(args.config)
@@ -80,11 +76,7 @@ def main():
             source_format="sas",
         )
 
-    log.info(
-        "The program has been executed in {}".format(
-            datetime.datetime.now() - start_time
-        )
-    )
+    log.info("The program has been executed in {}".format(datetime.datetime.now() - start_time))
 
     return 0
 

@@ -15,9 +15,7 @@ from openfisca_france_indirect_taxation.scripts.build_bdf_nomenclature import (
 log = logging.getLogger(__name__)
 
 
-@temporary_store_decorator(
-    config_files_directory=config_files_directory, file_name="indirect_taxation_tmp"
-)
+@temporary_store_decorator(config_files_directory=config_files_directory, file_name="indirect_taxation_tmp")
 def build_depenses_homogenisees(temporary_store=None, year=None):
     """Build menage consumption by categorie fiscale dataframe."""
     log.debug(f"Entering build_depenses_homogenisees for year={year}")
@@ -66,9 +64,7 @@ def build_depenses_homogenisees(temporary_store=None, year=None):
         conso.depense_avt_imput = conso.depense_avt_imput / 6.55957
         conso_small = conso[["ident_men", "poste1995", "depense"]]
 
-        conso_unstacked = conso_small.set_index(["ident_men", "poste1995"]).unstack(
-            "poste1995"
-        )
+        conso_unstacked = conso_small.set_index(["ident_men", "poste1995"]).unstack("poste1995")
         conso_unstacked = conso_unstacked.fillna(0)
 
         levels = conso_unstacked.columns.levels[1]
@@ -116,45 +112,25 @@ def build_depenses_homogenisees(temporary_store=None, year=None):
 
     # Renomme les colonnes (c01111 - > poste_01_1_1_1) et utilie une nomenclautre BDF ajustée sur la comptabilité nationale.
     bdf_nomenclature = build_complete_bdf_nomenclature(year=2017, to_csv=False)
-    bdf_nomenclature.loc[:, "adjusted_bdf"] = bdf_nomenclature.loc[
-        :, "adjusted_bdf"
-    ].apply(lambda x: "poste_" + x.replace(".", "_"))
-    bdf_nomenclature.loc[:, "Code_sous_classe"] = bdf_nomenclature.loc[
-        :, "Code_sous_classe"
-    ].apply(lambda x: "c" + x)
+    bdf_nomenclature.loc[:, "adjusted_bdf"] = bdf_nomenclature.loc[:, "adjusted_bdf"].apply(
+        lambda x: "poste_" + x.replace(".", "_")
+    )
+    bdf_nomenclature.loc[:, "Code_sous_classe"] = bdf_nomenclature.loc[:, "Code_sous_classe"].apply(lambda x: "c" + x)
     bdf_nomenclature.rename({"Code_sous_classe": "code_bdf"}, axis=1, inplace=True)
 
     assert not set(conso.columns).difference(set(bdf_nomenclature.code_bdf))
-    dict_codes = (
-        bdf_nomenclature.dropna().set_index("code_bdf").to_dict()["adjusted_bdf"]
-    )
+    dict_codes = bdf_nomenclature.dropna().set_index("code_bdf").to_dict()["adjusted_bdf"]
     coicop_data_frame = conso.rename(columns=dict_codes)
     depenses = coicop_data_frame.merge(poids, left_index=True, right_index=True)
 
     # On ventile les dépenses gaz et elec (factures jointes) dans les postes facture gaz et facture elec
-    depenses["depenses_gaz_et_elec"] = (
-        depenses["poste_04_5_2_1"] * depenses["poste_04_5_1_1"]
-    ) > 0
-    depenses_elec_seul_bdf = (
-        depenses["poste_04_5_1_1"]
-        * depenses["pondmen"]
-        * depenses["depenses_gaz_et_elec"]
-    ).sum()
-    depenses_gaz_seul_bdf = (
-        depenses["poste_04_5_2_1"]
-        * depenses["pondmen"]
-        * depenses["depenses_gaz_et_elec"]
-    ).sum()
-    part_gaz_seul_bdf = depenses_gaz_seul_bdf / (
-        depenses_elec_seul_bdf + depenses_gaz_seul_bdf
-    )
+    depenses["depenses_gaz_et_elec"] = (depenses["poste_04_5_2_1"] * depenses["poste_04_5_1_1"]) > 0
+    depenses_elec_seul_bdf = (depenses["poste_04_5_1_1"] * depenses["pondmen"] * depenses["depenses_gaz_et_elec"]).sum()
+    depenses_gaz_seul_bdf = (depenses["poste_04_5_2_1"] * depenses["pondmen"] * depenses["depenses_gaz_et_elec"]).sum()
+    part_gaz_seul_bdf = depenses_gaz_seul_bdf / (depenses_elec_seul_bdf + depenses_gaz_seul_bdf)
     part_elec_seul_bdf = 1 - part_gaz_seul_bdf
-    depenses["poste_04_5_1_1"] = (
-        depenses["poste_04_5_1_1"] + part_elec_seul_bdf * depenses["poste_04_5_0_0"]
-    )
-    depenses["poste_04_5_2_1"] = (
-        depenses["poste_04_5_2_1"] + part_gaz_seul_bdf * depenses["poste_04_5_0_0"]
-    )
+    depenses["poste_04_5_1_1"] = depenses["poste_04_5_1_1"] + part_elec_seul_bdf * depenses["poste_04_5_0_0"]
+    depenses["poste_04_5_2_1"] = depenses["poste_04_5_2_1"] + part_gaz_seul_bdf * depenses["poste_04_5_0_0"]
     depenses["poste_04_5_0_0"] = 0
     depenses.drop("depenses_gaz_et_elec", axis=1, inplace=True)
 

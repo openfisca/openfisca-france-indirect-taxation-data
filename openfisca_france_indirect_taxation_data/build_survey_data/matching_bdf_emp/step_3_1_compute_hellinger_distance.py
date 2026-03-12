@@ -47,12 +47,8 @@ def hellinger_distance(df1, df2, var, weight_col="pondmen"):
 
     # Calcul des distributions
     categories = pd.Index(sorted(set(df1[var].unique()) | set(df2[var].unique())))
-    dist1 = (df1.groupby(var)[weight_col].sum() / df1[weight_col].sum()).reindex(
-        categories, fill_value=0
-    )
-    dist2 = (df2.groupby(var)[weight_col].sum() / df2[weight_col].sum()).reindex(
-        categories, fill_value=0
-    )
+    dist1 = (df1.groupby(var)[weight_col].sum() / df1[weight_col].sum()).reindex(categories, fill_value=0)
+    dist2 = (df2.groupby(var)[weight_col].sum() / df2[weight_col].sum()).reindex(categories, fill_value=0)
 
     # Calcul de la distance
     distance = hellinger(dist1.tolist(), dist2.tolist())

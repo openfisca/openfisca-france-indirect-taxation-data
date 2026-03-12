@@ -14,19 +14,11 @@ def compute_bdf_decile(input_bdf, type):
     input_bdf_copy = input_bdf.copy()
 
     if type == "indiv":
-        input_bdf_copy["pondindiv"] = (
-            input_bdf_copy["pondmen"] * input_bdf_copy["npers"]
-        )
+        input_bdf_copy["pondindiv"] = input_bdf_copy["pondmen"] * input_bdf_copy["npers"]
 
-    input_bdf_copy["pond{}".format(type)] = input_bdf_copy[
-        "pond{}".format(type)
-    ].astype(float)
-    input_bdf_copy["niveau_de_vie_bdf"] = (
-        input_bdf_copy["rev_disponible"] / input_bdf_copy["ocde10"]
-    )
-    input_bdf_copy["niveau_de_vie_bdf"] = input_bdf_copy["niveau_de_vie_bdf"].astype(
-        float
-    )
+    input_bdf_copy["pond{}".format(type)] = input_bdf_copy["pond{}".format(type)].astype(float)
+    input_bdf_copy["niveau_de_vie_bdf"] = input_bdf_copy["rev_disponible"] / input_bdf_copy["ocde10"]
+    input_bdf_copy["niveau_de_vie_bdf"] = input_bdf_copy["niveau_de_vie_bdf"].astype(float)
 
     # On calcule des déciles de niveau de vie
     input_bdf_copy["decile_{}_niveau_vie".format(type)] = weighted_quantiles(
@@ -35,9 +27,9 @@ def compute_bdf_decile(input_bdf, type):
         weights=input_bdf_copy["pond{}".format(type)],
         return_quantiles=False,
     )
-    input_bdf_copy["decile_{}_niveau_vie".format(type)] = input_bdf_copy[
-        "decile_{}_niveau_vie".format(type)
-    ].astype(int)
+    input_bdf_copy["decile_{}_niveau_vie".format(type)] = input_bdf_copy["decile_{}_niveau_vie".format(type)].astype(
+        int
+    )
 
     input_bdf_by_decile = df_weighted_average_grouped(
         input_bdf_copy,
@@ -52,9 +44,7 @@ def compute_bdf_decile(input_bdf, type):
 def compute_erfs_decile(target_year, type, path):
     """Calcule des déciles en niveau de vie à partir de l'ERFS pour une année cible donnée."""
 
-    erfs_menage = pd.read_csv(
-        os.path.join(path, "fpr_menage_{}.csv".format(target_year)), sep=";"
-    )
+    erfs_menage = pd.read_csv(os.path.join(path, "fpr_menage_{}.csv".format(target_year)), sep=";")
 
     erfs_menage.columns = erfs_menage.columns.str.lower()
     erfs_menage.rename({"wprm": "pondmen", "wpri": "pondindiv"}, axis=1, inplace=True)
@@ -82,12 +72,8 @@ def get_coef_calage_niveau_vie(input_bdf, target_decile, type):
 
     input_bdf_copy, bdf_decile = compute_bdf_decile(input_bdf, type)
 
-    df_calage = bdf_decile.merge(
-        target_decile, how="left", on="decile_{}_niveau_vie".format(type)
-    )
-    df_calage["coef_calage"] = (
-        df_calage["niveau_de_vie"] / df_calage["niveau_de_vie_bdf"]
-    )
+    df_calage = bdf_decile.merge(target_decile, how="left", on="decile_{}_niveau_vie".format(type))
+    df_calage["coef_calage"] = df_calage["niveau_de_vie"] / df_calage["niveau_de_vie_bdf"]
 
     return input_bdf_copy, df_calage.reset_index()
 
@@ -96,24 +82,16 @@ def calage_bdf_niveau_vie(input_bdf, target_decile, type):
     """Cale les niveaux de vie d'une base BdF d'entrée sur les déciles d'une base cible."""
     input_bdf_copy = input_bdf.copy()
 
-    input_bdf_copy, df_calage = get_coef_calage_niveau_vie(
-        input_bdf_copy, target_decile, type
-    )
+    input_bdf_copy, df_calage = get_coef_calage_niveau_vie(input_bdf_copy, target_decile, type)
     df_calage["test"] = df_calage["coef_calage"].apply(lambda x: abs(x - 1))
 
     while df_calage["test"].max(axis=0) > 1e-5:
         df_calage = df_calage[["decile_{}_niveau_vie".format(type), "coef_calage"]]
         if "coef_calage" in input_bdf_copy.columns:
             input_bdf_copy.drop(labels=["coef_calage"], axis=1, inplace=True)
-        input_bdf_copy = input_bdf_copy.merge(
-            df_calage, how="left", on="decile_{}_niveau_vie".format(type)
-        )
-        input_bdf_copy["rev_disponible"] = (
-            input_bdf_copy["coef_calage"] * input_bdf_copy["rev_disponible"]
-        )
-        input_bdf_copy, df_calage = get_coef_calage_niveau_vie(
-            input_bdf_copy, target_decile, type
-        )
+        input_bdf_copy = input_bdf_copy.merge(df_calage, how="left", on="decile_{}_niveau_vie".format(type))
+        input_bdf_copy["rev_disponible"] = input_bdf_copy["coef_calage"] * input_bdf_copy["rev_disponible"]
+        input_bdf_copy, df_calage = get_coef_calage_niveau_vie(input_bdf_copy, target_decile, type)
         df_calage["test"] = df_calage["coef_calage"].apply(lambda x: abs(x - 1))
 
     return input_bdf_copy, df_calage

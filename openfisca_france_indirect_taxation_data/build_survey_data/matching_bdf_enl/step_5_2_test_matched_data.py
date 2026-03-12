@@ -41,15 +41,9 @@ data_matched_rank = pd.read_csv(
 
 def test_froid_niveau_vie_decile(data_enl, data_matched):
     dict_froid = dict()
-    average_froid_enl = (
-        100
-        * sum(data_enl["pondmen"] * (data_enl["froid"] == 1))
-        / sum(data_enl["pondmen"])
-    )
+    average_froid_enl = 100 * sum(data_enl["pondmen"] * (data_enl["froid"] == 1)) / sum(data_enl["pondmen"])
     average_froid_matched = (
-        100
-        * sum(data_matched["pondmen"] * (data_matched["froid"] == 1))
-        / sum(data_matched["pondmen"])
+        100 * sum(data_matched["pondmen"] * (data_matched["froid"] == 1)) / sum(data_matched["pondmen"])
     )
     dict_froid["Average"] = [average_froid_enl, average_froid_matched]
     for i in range(1, 11):
@@ -57,9 +51,7 @@ def test_froid_niveau_vie_decile(data_enl, data_matched):
         data_matched_decile = data_matched.query("niveau_vie_decile == {}".format(i))
 
         part_froid_enl = (
-            100
-            * sum(data_enl_decile["pondmen"] * (data_enl_decile["froid"] == 1))
-            / sum(data_enl_decile["pondmen"])
+            100 * sum(data_enl_decile["pondmen"] * (data_enl_decile["froid"] == 1)) / sum(data_enl_decile["pondmen"])
         )
         part_froid_matched = (
             100
@@ -72,28 +64,16 @@ def test_froid_niveau_vie_decile(data_enl, data_matched):
     return dict_froid
 
 
-test_froid_niveau_vie_decile_distance = test_froid_niveau_vie_decile(
-    data_enl, data_matched_distance
-)
-test_froid_niveau_vie_decile_random = test_froid_niveau_vie_decile(
-    data_enl, data_matched_random
-)
-test_froid_niveau_vie_decile_rank = test_froid_niveau_vie_decile(
-    data_enl, data_matched_rank
-)
+test_froid_niveau_vie_decile_distance = test_froid_niveau_vie_decile(data_enl, data_matched_distance)
+test_froid_niveau_vie_decile_random = test_froid_niveau_vie_decile(data_enl, data_matched_random)
+test_froid_niveau_vie_decile_rank = test_froid_niveau_vie_decile(data_enl, data_matched_rank)
 
 
 def test_froid_cout_niveau_vie_decile(data_enl, data_matched):
     dict_froid = dict()
-    average_froid_enl = (
-        100
-        * sum(data_enl["pondmen"] * (data_enl["froid_cout"] == 1))
-        / sum(data_enl["pondmen"])
-    )
+    average_froid_enl = 100 * sum(data_enl["pondmen"] * (data_enl["froid_cout"] == 1)) / sum(data_enl["pondmen"])
     average_froid_matched = (
-        100
-        * sum(data_matched["pondmen"] * (data_matched["froid_cout"] == 1))
-        / sum(data_matched["pondmen"])
+        100 * sum(data_matched["pondmen"] * (data_matched["froid_cout"] == 1)) / sum(data_matched["pondmen"])
     )
     dict_froid["Average"] = [average_froid_enl, average_froid_matched]
     for i in range(1, 11):
@@ -107,10 +87,7 @@ def test_froid_cout_niveau_vie_decile(data_enl, data_matched):
         )
         part_froid_matched = (
             100
-            * sum(
-                data_matched_decile["pondmen"]
-                * (data_matched_decile["froid_cout"] == 1)
-            )
+            * sum(data_matched_decile["pondmen"] * (data_matched_decile["froid_cout"] == 1))
             / sum(data_matched_decile["pondmen"])
         )
 
@@ -119,12 +96,6 @@ def test_froid_cout_niveau_vie_decile(data_enl, data_matched):
     return dict_froid
 
 
-test_froid_cout_niveau_vie_decile_distance = test_froid_cout_niveau_vie_decile(
-    data_enl, data_matched_distance
-)
-test_froid_cout_niveau_vie_decile_random = test_froid_cout_niveau_vie_decile(
-    data_enl, data_matched_random
-)
-test_froid_cout_niveau_vie_decile_rank = test_froid_cout_niveau_vie_decile(
-    data_enl, data_matched_rank
-)
+test_froid_cout_niveau_vie_decile_distance = test_froid_cout_niveau_vie_decile(data_enl, data_matched_distance)
+test_froid_cout_niveau_vie_decile_random = test_froid_cout_niveau_vie_decile(data_enl, data_matched_random)
+test_froid_cout_niveau_vie_decile_rank = test_froid_cout_niveau_vie_decile(data_enl, data_matched_rank)

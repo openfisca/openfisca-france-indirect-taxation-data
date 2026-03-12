@@ -45,12 +45,8 @@ results_aba = check_aba()
 # agepr - age de la personne de référence
 def check_agepr():
     results = dict()
-    results["Average - BdF"] = (
-        data_bdf["agepr"] * data_bdf["pondmen"]
-    ).sum() / data_bdf["pondmen"].sum()
-    results["Average - ENL"] = (
-        data_enl["agepr"] * data_enl["pondmen"]
-    ).sum() / data_enl["pondmen"].sum()
+    results["Average - BdF"] = (data_bdf["agepr"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["Average - ENL"] = (data_enl["agepr"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     for i in [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95]:
         results["{} th quantile - BdF".format(i)] = data_bdf["agepr"].quantile(i)
@@ -68,12 +64,8 @@ def check_amr():
     results = dict()
     amr_bdf = data_bdf.query("aba == 1")
     amr_enl = data_enl.query("aba == 1")
-    results["Average - BdF"] = (amr_bdf["amr"] * amr_bdf["pondmen"]).sum() / amr_bdf[
-        "pondmen"
-    ].sum()
-    results["Average - ENL"] = (amr_enl["amr"] * amr_enl["pondmen"]).sum() / amr_enl[
-        "pondmen"
-    ].sum()
+    results["Average - BdF"] = (amr_bdf["amr"] * amr_bdf["pondmen"]).sum() / amr_bdf["pondmen"].sum()
+    results["Average - ENL"] = (amr_enl["amr"] * amr_enl["pondmen"]).sum() / amr_enl["pondmen"].sum()
     for i in [0.8, 0.85, 0.9, 0.95, 0.99, 0.995, 0.999]:
         results["{} th quantile - BdF".format(i)] = data_bdf["amr"].quantile(i)
         results["{} th quantile - ENL".format(i)] = data_enl["amr"].quantile(i)
@@ -142,21 +134,13 @@ def check_cs42():
     for j in ["pr", "cj"]:
         for i in range(11, 87):
             data_bdf["pondmen_{}".format(i)] = 0
-            data_bdf["pondmen_{}".format(i)].loc[data_bdf["cs42{}".format(j)] == i] = (
-                data_bdf["pondmen"]
-            )
-            part_bdf = (
-                data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
-            )
+            data_bdf["pondmen_{}".format(i)].loc[data_bdf["cs42{}".format(j)] == i] = data_bdf["pondmen"]
+            part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
             del data_bdf["pondmen_{}".format(i)]
 
             data_enl["pondmen_{}".format(i)] = 0
-            data_enl["pondmen_{}".format(i)].loc[data_enl["cs42{}".format(j)] == i] = (
-                data_enl["pondmen"]
-            )
-            part_enl = (
-                data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
-            )
+            data_enl["pondmen_{}".format(i)].loc[data_enl["cs42{}".format(j)] == i] = data_enl["pondmen"]
+            part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
             del data_enl["pondmen_{}".format(i)]
 
             if j == "pr":
@@ -177,19 +161,11 @@ results_cs42cj = check_cs42()[1]
 
 def check_depenses_energies():
     results = dict()
-    results["Average - BdF"] = (
-        data_bdf["depenses_energies"] * data_bdf["pondmen"]
-    ).sum() / data_bdf["pondmen"].sum()
-    results["Average - ENL"] = (
-        data_enl["depenses_energies"] * data_enl["pondmen"]
-    ).sum() / data_enl["pondmen"].sum()
+    results["Average - BdF"] = (data_bdf["depenses_energies"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["Average - ENL"] = (data_enl["depenses_energies"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
     for i in [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95]:
-        results["{} th quantile - BdF".format(i)] = data_bdf[
-            "depenses_energies"
-        ].quantile(i)
-        results["{} th quantile - ENL".format(i)] = data_enl[
-            "depenses_energies"
-        ].quantile(i)
+        results["{} th quantile - BdF".format(i)] = data_bdf["depenses_energies"].quantile(i)
+        results["{} th quantile - ENL".format(i)] = data_enl["depenses_energies"].quantile(i)
 
     return results
 
@@ -202,16 +178,12 @@ def check_dip14():
     results = dict()
     for i in [0, 10, 12, 20, 30, 31, 33, 41, 42, 43, 44, 50, 60, 70, 71]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["dip14pr"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["dip14pr"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["dip14pr"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["dip14pr"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -251,12 +223,8 @@ results_htl = check_htl()
 
 def check_log_indiv():
     results = dict()
-    results["BdF"] = (data_bdf["log_indiv"] * data_bdf["pondmen"]).sum() / data_bdf[
-        "pondmen"
-    ].sum()
-    results["ENL"] = (data_enl["log_indiv"] * data_enl["pondmen"]).sum() / data_enl[
-        "pondmen"
-    ].sum()
+    results["BdF"] = (data_bdf["log_indiv"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["ENL"] = (data_enl["log_indiv"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     return results
 
@@ -267,12 +235,8 @@ results_log_indiv = check_log_indiv()
 # mchof_d - montant annuel des dépenses en chauffage collectif
 def check_mchof_d():
     results = dict()
-    results["BdF"] = (data_bdf["mchof_d"] * data_bdf["pondmen"]).sum() / data_bdf[
-        "pondmen"
-    ].sum()
-    results["ENL"] = (data_enl["mchof_d"] * data_enl["pondmen"]).sum() / data_enl[
-        "pondmen"
-    ].sum()
+    results["BdF"] = (data_bdf["mchof_d"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["ENL"] = (data_enl["mchof_d"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     return results
 
@@ -284,12 +248,8 @@ results_mchof_d = check_mchof_d()
 # mfac_eau1_d - montant annuel des dépenses d'eau, redressé
 def check_mfac_eau1_d():
     results = dict()
-    results["BdF"] = (data_bdf["mfac_eau1_d"] * data_bdf["pondmen"]).sum() / data_bdf[
-        "pondmen"
-    ].sum()
-    results["ENL"] = (data_enl["mfac_eau1_d"] * data_enl["pondmen"]).sum() / data_enl[
-        "pondmen"
-    ].sum()
+    results["BdF"] = (data_bdf["mfac_eau1_d"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["ENL"] = (data_enl["mfac_eau1_d"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     return results
 
@@ -301,12 +261,8 @@ results_mfac_eau1_d = check_mfac_eau1_d()
 # mloy_d - montant mensuel du loyer hors charges
 def check_mloy_d():
     results = dict()
-    results["BdF"] = (data_bdf["mloy_d"] * data_bdf["pondmen"]).sum() / data_bdf[
-        "pondmen"
-    ].sum()
-    results["ENL"] = (data_enl["mloy_d"] * data_enl["pondmen"]).sum() / data_enl[
-        "pondmen"
-    ].sum()
+    results["BdF"] = (data_bdf["mloy_d"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["ENL"] = (data_enl["mloy_d"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     return results
 
@@ -320,16 +276,12 @@ def check_nactifs():
     results = dict()
     for i in [0, 1, 2, 3, 4, 5, 6]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["nactifs"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["nactifs"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -372,16 +324,12 @@ def check_nenfants():
     results = dict()
     for i in [0, 1, 2, 3, 4, 5, 6]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nenfants"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nenfants"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["nenfants"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["nenfants"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -398,12 +346,8 @@ results_nenfants = check_nenfants()
 # revtot - revenu total du ménage
 def check_revtot():
     results = dict()
-    results["Average - BdF"] = (
-        data_bdf["revtot"] * data_bdf["pondmen"]
-    ).sum() / data_bdf["pondmen"].sum()
-    results["Average - ENL"] = (
-        data_enl["revtot"] * data_enl["pondmen"]
-    ).sum() / data_enl["pondmen"].sum()
+    results["Average - BdF"] = (data_bdf["revtot"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["Average - ENL"] = (data_enl["revtot"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
 
     for i in [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95]:
         results["{} th quantile - BdF".format(i)] = data_bdf["revtot"].quantile(i)
@@ -444,22 +388,14 @@ results_ocde10 = check_ocde10()
 def check_part_energies_revtot(data_bdf, data_enl):
     results = dict()
     results["Average - BdF"] = (
-        100
-        * (data_bdf["part_energies_revtot"] * data_bdf["pondmen"]).sum()
-        / data_bdf["pondmen"].sum()
+        100 * (data_bdf["part_energies_revtot"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
     )
     results["Average - ENL"] = (
-        100
-        * (data_enl["part_energies_revtot"] * data_enl["pondmen"]).sum()
-        / data_enl["pondmen"].sum()
+        100 * (data_enl["part_energies_revtot"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
     )
     for i in [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95]:
-        results["{} th quantile - BdF".format(i)] = 100 * data_bdf[
-            "part_energies_revtot"
-        ].quantile(i)
-        results["{} th quantile - ENL".format(i)] = 100 * data_enl[
-            "part_energies_revtot"
-        ].quantile(i)
+        results["{} th quantile - BdF".format(i)] = 100 * data_bdf["part_energies_revtot"].quantile(i)
+        results["{} th quantile - ENL".format(i)] = 100 * data_enl["part_energies_revtot"].quantile(i)
 
     data_bdf = data_bdf.sort_values(by=["part_energies_revtot"])
     data_bdf = data_bdf.query("part_energies_revtot < 1").copy()
@@ -497,16 +433,12 @@ def check_postes_energies():
         ).sum() / data_enl["pondmen"].sum()
 
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["depenses_{}".format(i)] > 0] = (
-            data_bdf["pondmen"]
-        )
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["depenses_{}".format(i)] > 0] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["depenses_{}".format(i)] > 0] = (
-            data_enl["pondmen"]
-        )
+        data_enl["pondmen_{}".format(i)].loc[data_enl["depenses_{}".format(i)] > 0] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -527,21 +459,13 @@ def check_situa():
     for j in ["pr", "cj"]:
         for i in [1, 2, 3, 4, 5, 6, 7]:
             data_bdf["pondmen_{}".format(i)] = 0
-            data_bdf["pondmen_{}".format(i)].loc[data_bdf["situa{}".format(j)] == i] = (
-                data_bdf["pondmen"]
-            )
-            part_bdf = (
-                data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
-            )
+            data_bdf["pondmen_{}".format(i)].loc[data_bdf["situa{}".format(j)] == i] = data_bdf["pondmen"]
+            part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
             del data_bdf["pondmen_{}".format(i)]
 
             data_enl["pondmen_{}".format(i)] = 0
-            data_enl["pondmen_{}".format(i)].loc[data_enl["situa{}".format(j)] == i] = (
-                data_enl["pondmen"]
-            )
-            part_enl = (
-                data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
-            )
+            data_enl["pondmen_{}".format(i)].loc[data_enl["situa{}".format(j)] == i] = data_enl["pondmen"]
+            part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
             del data_enl["pondmen_{}".format(i)]
 
             if j == "pr":
@@ -562,12 +486,8 @@ results_situacj = check_situa()[1]
 
 def check_surfhab_d():
     results = dict()
-    results["Average - BdF"] = (
-        data_bdf["surfhab_d"] * data_bdf["pondmen"]
-    ).sum() / data_bdf["pondmen"].sum()
-    results["Average - ENL"] = (
-        data_enl["surfhab_d"] * data_enl["pondmen"]
-    ).sum() / data_enl["pondmen"].sum()
+    results["Average - BdF"] = (data_bdf["surfhab_d"] * data_bdf["pondmen"]).sum() / data_bdf["pondmen"].sum()
+    results["Average - ENL"] = (data_enl["surfhab_d"] * data_enl["pondmen"]).sum() / data_enl["pondmen"].sum()
     for i in [0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95]:
         results["{} th quantile - BdF".format(i)] = data_bdf["surfhab_d"].quantile(i)
         results["{} th quantile - ENL".format(i)] = data_enl["surfhab_d"].quantile(i)

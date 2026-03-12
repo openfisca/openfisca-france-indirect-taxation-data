@@ -49,9 +49,7 @@ simulated_variables = [
     "depenses_combustibles_liquides",
 ]
 
-df = survey_scenario.create_data_frame_by_entity(simulated_variables, period=year)[
-    "menage"
-]
+df = survey_scenario.create_data_frame_by_entity(simulated_variables, period=year)["menage"]
 
 keep = df[
     ["depenses_energies_logement_officielle_2018_in_2016"]
@@ -64,42 +62,22 @@ keep = df[
     + ["depenses_gaz_ville"]
 ]
 
-keep["net_logement"] = (
-    keep["depenses_energies_logement_officielle_2018_in_2016"]
-    - keep["depenses_energies_logement"]
-)
+keep["net_logement"] = keep["depenses_energies_logement_officielle_2018_in_2016"] - keep["depenses_energies_logement"]
 weird = keep.query("net < 0")
 
-keep["net_gaz"] = (
-    keep["depenses_gaz_ville_officielle_2018_in_2016"] - keep["depenses_gaz_ville"]
-)
+keep["net_gaz"] = keep["depenses_gaz_ville_officielle_2018_in_2016"] - keep["depenses_gaz_ville"]
 keep["net_fioul"] = (
-    keep["depenses_combustibles_liquides_officielle_2018_in_2016"]
-    - keep["depenses_combustibles_liquides"]
+    keep["depenses_combustibles_liquides_officielle_2018_in_2016"] - keep["depenses_combustibles_liquides"]
 )
 
 weird_fioul = keep.query("net_fioul < 0")
 weird_gaz = keep.query("net_gaz < 0")
-weird_gaz_keep = weird_gaz[
-    ["depenses_gaz_ville_officielle_2018_in_2016", "depenses_gaz_ville"]
-]
+weird_gaz_keep = weird_gaz[["depenses_gaz_ville_officielle_2018_in_2016", "depenses_gaz_ville"]]
 
 precaires_log = (df["precarite_energetique_rev_disponible"] * df["pondmen"]).sum()
 precaires_tra = (df["precarite_transports_rev_disponible"] * df["pondmen"]).sum()
-df["preca_joint"] = 1 * (
-    (
-        df["precarite_energetique_rev_disponible"]
-        + df["precarite_transports_rev_disponible"]
-    )
-    > 0
-)
-df["preca_both"] = 1 * (
-    (
-        df["precarite_energetique_rev_disponible"]
-        + df["precarite_transports_rev_disponible"]
-    )
-    > 1
-)
+df["preca_joint"] = 1 * ((df["precarite_energetique_rev_disponible"] + df["precarite_transports_rev_disponible"]) > 0)
+df["preca_both"] = 1 * ((df["precarite_energetique_rev_disponible"] + df["precarite_transports_rev_disponible"]) > 1)
 
 preca_joint = (df["preca_joint"] * df["pondmen"]).sum()
 preca_both = (df["preca_both"] * df["pondmen"]).sum()

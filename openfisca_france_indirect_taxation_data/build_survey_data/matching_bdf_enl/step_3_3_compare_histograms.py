@@ -136,16 +136,12 @@ def histogram_dip14():
     list_keys = []
     for i in [0, 10, 12, 20, 30, 31, 33, 41, 42, 43, 44, 50, 60, 70, 71]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["dip14pr"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["dip14pr"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["dip14pr"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["dip14pr"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -194,16 +190,12 @@ def histogram_nactifs():
     list_keys = []
     for i in [0, 1, 2, 3, 4, 5, 6]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nactifs"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["nactifs"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["nactifs"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 
@@ -252,16 +244,12 @@ def histogram_nenfants():
     list_keys = []
     for i in [0, 1, 2, 3, 4, 5, 6]:
         data_bdf["pondmen_{}".format(i)] = 0
-        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nenfants"] == i] = data_bdf[
-            "pondmen"
-        ]
+        data_bdf["pondmen_{}".format(i)].loc[data_bdf["nenfants"] == i] = data_bdf["pondmen"]
         part_bdf = data_bdf["pondmen_{}".format(i)].sum() / data_bdf["pondmen"].sum()
         del data_bdf["pondmen_{}".format(i)]
 
         data_enl["pondmen_{}".format(i)] = 0
-        data_enl["pondmen_{}".format(i)].loc[data_enl["nenfants"] == i] = data_enl[
-            "pondmen"
-        ]
+        data_enl["pondmen_{}".format(i)].loc[data_enl["nenfants"] == i] = data_enl["pondmen"]
         part_enl = data_enl["pondmen_{}".format(i)].sum() / data_enl["pondmen"].sum()
         del data_enl["pondmen_{}".format(i)]
 

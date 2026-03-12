@@ -22,9 +22,7 @@ def collapsesum(data_frame, by=None, var=None, weights=None):
 
 
 def find_nearest_inferior(years, year):
-    anterior_years = [
-        available_year for available_year in years if available_year <= year
-    ]
+    anterior_years = [available_year for available_year in years if available_year <= year]
     return max(anterior_years)
 
 
@@ -35,13 +33,9 @@ def hellinger(p, q):
     return np.sqrt(np.sum((np.sqrt(p) - np.sqrt(q)) ** 2)) / _SQRT2
 
 
-def histogrammes(
-    list_keys, list_values_bdf, list_values_entd, data_name_1, data_name_2
-):
+def histogrammes(list_keys, list_values_bdf, list_values_entd, data_name_1, data_name_2):
     size_hist = np.arange(len(list_keys))
-    plot_bdf = plt.bar(
-        size_hist - 0.125, list_values_bdf, color="b", align="center", width=0.25
-    )
+    plot_bdf = plt.bar(size_hist - 0.125, list_values_bdf, color="b", align="center", width=0.25)
     plot_entd = plt.bar(size_hist + 0.125, list_values_entd, align="center", width=0.25)
     plt.xticks(size_hist, list_keys)
     plt.legend((plot_bdf[0], plot_entd[0]), (data_name_1, data_name_2))

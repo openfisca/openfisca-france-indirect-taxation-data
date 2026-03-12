@@ -13,9 +13,7 @@ from openfisca_survey_manager.paths import (
 log = logging.getLogger(__name__)
 
 
-@temporary_store_decorator(
-    config_files_directory=config_files_directory, file_name="indirect_taxation_tmp"
-)
+@temporary_store_decorator(config_files_directory=config_files_directory, file_name="indirect_taxation_tmp")
 def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=None):
     """Homogénéisation des caractéristiques sociales des ménages."""
     assert temporary_store is not None
@@ -81,11 +79,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         menage.vag = menage.vag.astype("int")
 
         menage["nadultes"] = menage["npers"] - menage["nenfants"]
-        menage["ocde10"] = (
-            1
-            + 0.5 * numpy.maximum(0, menage["nadultes"] - 1)
-            + 0.3 * menage["nenfants"]
-        )
+        menage["ocde10"] = 1 + 0.5 * numpy.maximum(0, menage["nadultes"] - 1) + 0.3 * menage["nenfants"]
 
         # harmonisation des types de ménage sur la nomenclature 2010
         menage["typmen_"] = menage["typmen"]
@@ -202,10 +196,8 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         # pour le modèle de demande
         menage.agecj = menage.agecj.fillna(0)
 
-        assert menage.notnull().all().all(), (
-            "The following variables contains NaN values: {}".format(
-                list(menage.isnull().any()[menage.isnull().any()].index)
-            )
+        assert menage.notnull().all().all(), "The following variables contains NaN values: {}".format(
+            list(menage.isnull().any()[menage.isnull().any()].index)
         )
 
         menage["vag_"] = menage["vag"]
@@ -316,9 +308,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         sourcp.set_index("ident_men", inplace=True)
         menage = menage.merge(sourcp, left_index=True, right_index=True)
 
-        individus = survey.get_values(
-            table="individus", variables=["ident", "matri", "lien", "anais"]
-        )
+        individus = survey.get_values(table="individus", variables=["ident", "matri", "lien", "anais"])
 
         individus = individus.loc[individus.lien == 1].copy()
         individus.rename(
@@ -327,16 +317,12 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         )
         variables_to_destring = ["anais"]
         for variable_to_destring in variables_to_destring:
-            individus[variable_to_destring] = (
-                individus[variable_to_destring].astype("int").copy()
-            )
+            individus[variable_to_destring] = individus[variable_to_destring].astype("int").copy()
         individus["agepr"] = year - individus.anais
         individus.set_index("ident_men", inplace=True)
 
-        assert menage.notnull().all().all(), (
-            "The following variables contains NaN values: {}".format(
-                list(menage.isnull().any()[menage.isnull().any()].index)
-            )
+        assert menage.notnull().all().all(), "The following variables contains NaN values: {}".format(
+            list(menage.isnull().any()[menage.isnull().any()].index)
         )
 
         menage = menage.merge(individus, left_index=True, right_index=True)
@@ -363,22 +349,14 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
             "zeat",
             "cs24pr",
         ]
-        socio_demo_variables += [
-            column for column in menage.columns if column.startswith("dip14")
-        ]
-        socio_demo_variables += [
-            column for column in menage.columns if column.startswith("natio7")
-        ]
+        socio_demo_variables += [column for column in menage.columns if column.startswith("dip14")]
+        socio_demo_variables += [column for column in menage.columns if column.startswith("natio7")]
         # activité professionnelle
         activite_prof_variables = ["situacj", "situapr"]
-        activite_prof_variables += [
-            column for column in menage.columns if column.startswith("cs42")
-        ]
+        activite_prof_variables += [column for column in menage.columns if column.startswith("cs42")]
         # logement
         logement_variables = ["htl", "strate"]
-        menage = menage[
-            socio_demo_variables + activite_prof_variables + logement_variables
-        ].copy()
+        menage = menage[socio_demo_variables + activite_prof_variables + logement_variables].copy()
         menage.rename(
             columns={
                 # "agpr": "agepr",
@@ -391,9 +369,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         del menage["agpr"]
         menage["nadultes"] = menage.npers - menage.nenfants
         for person in ["pr", "cj"]:
-            menage["natio" + person] = (
-                menage["natio7" + person] > 2
-            )  # TODO: changer de convention ?
+            menage["natio" + person] = menage["natio7" + person] > 2  # TODO: changer de convention ?
             del menage["natio7" + person]
 
         menage.agecj = menage.agecj.fillna(0)
@@ -407,10 +383,8 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
             "pondmen",
             "nadultes",
         ]
-        assert menage.notnull().all().all(), (
-            "The following variables contains NaN values: {}".format(
-                list(menage.isnull().any()[menage.isnull().any()].index)
-            )
+        assert menage.notnull().all().all(), "The following variables contains NaN values: {}".format(
+            list(menage.isnull().any()[menage.isnull().any()].index)
         )
 
         menage.couplepr = menage.couplepr > 2  # TODO: changer de convention ?
@@ -458,9 +432,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         kept_variables = ["ident_men", "etamatri", "agepr"]
         individus = individus[kept_variables].copy()
         individus.loc[individus.etamatri == 0, "etamatri"] = 1
-        individus["etamatri"] = individus["etamatri"].astype(
-            "int"
-        )  # MBJ TODO: define as a catagory ?
+        individus["etamatri"] = individus["etamatri"].astype("int")  # MBJ TODO: define as a catagory ?
         individus.set_index("ident_men", inplace=True)
         menage = menage.merge(individus, left_index=True, right_index=True)
 
@@ -473,9 +445,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         individus["age"] = year - individus.anais
         individus.loc[individus.vag == 6, "age"] = year + 1 - individus.anais
         # Garder toutes les personnes du ménage qui ne sont pas la personne de référence et le conjoint
-        individus = individus[
-            (individus.lienpref != 00) & (individus.lienpref != 0o1)
-        ].copy()
+        individus = individus[(individus.lienpref != 00) & (individus.lienpref != 0o1)].copy()
         individus.sort_values(by=["ident_men", "ident_ind"], inplace=True)
 
         # Inspired by http://stackoverflow.com/questions/17228215/enumerate-each-row-for-each-group-in-a-dataframe
@@ -682,9 +652,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         ] + ["age{}".format(age) for age in range(3, 14)]
 
         for variable in variables:
-            assert variable in menage.columns, (
-                "{} is not a column of menage data frame".format(variable)
-            )
+            assert variable in menage.columns, "{} is not a column of menage data frame".format(variable)
 
     if year in [2011, 2017]:
         variables = [
@@ -767,16 +735,12 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
             "vag",
         ]
 
-        depmen = survey.get_values(
-            table="depmen", variables=variables_depmen, ignorecase=True
-        )
+        depmen = survey.get_values(table="depmen", variables=variables_depmen, ignorecase=True)
 
         menage.set_index("ident_men", inplace=True)
         depmen.set_index("ident_men", inplace=True)
         variables_sante = ["ident_men", "complentr"]
-        compl_sante = survey.get_values(
-            table="compl_sante", variables=variables_sante, ignorecase=True
-        )
+        compl_sante = survey.get_values(table="compl_sante", variables=variables_sante, ignorecase=True)
 
         compl_sante.set_index("ident_men", inplace=True)
 
@@ -784,9 +748,7 @@ def build_homogeneisation_caracteristiques_sociales(temporary_store=None, year=N
         compl_sante = compl_sante.query("cmu != 0").copy()
 
         menage = menage.merge(depmen, left_index=True, right_index=True)
-        menage = menage.merge(
-            compl_sante, left_index=True, right_index=True, how="left"
-        )
+        menage = menage.merge(compl_sante, left_index=True, right_index=True, how="left")
         menage = menage.groupby(menage.index).first()
         menage["cmu"] = menage.cmu.fillna(0)
 
@@ -844,8 +806,4 @@ if __name__ == "__main__":
     year = 2011
     build_homogeneisation_caracteristiques_sociales(year=year)
 
-    log.info(
-        "step_3_homogeneisation_caracteristiques_sociales {}".format(
-            time.process_time()() - deb
-        )
-    )
+    log.info("step_3_homogeneisation_caracteristiques_sociales {}".format(time.process_time()() - deb))

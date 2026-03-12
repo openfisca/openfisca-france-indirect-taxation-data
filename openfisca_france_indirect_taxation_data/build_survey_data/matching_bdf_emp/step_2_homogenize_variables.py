@@ -96,15 +96,11 @@ def create_new_variables(year_data):
         )
 
         if option == "emp":
-            data["distance"] = (
-                data.distance_diesel + data.distance_essence + data.distance_autre_carbu
-            )
+            data["distance"] = data.distance_diesel + data.distance_essence + data.distance_autre_carbu
 
         return data
 
-    return create_new_variables_(data_bdf, option="bdf"), create_new_variables_(
-        data_emp, option="emp"
-    )
+    return create_new_variables_(data_bdf, option="bdf"), create_new_variables_(data_emp, option="emp")
 
 
 def create_niveau_vie_quantiles(year_data):
@@ -137,16 +133,12 @@ def create_niveau_vie_quantiles(year_data):
             del data["sum_pondmen"]
 
         if option == "emp":
-            data["niveau_vie_quintile"] = data["niveau_vie_decile"].apply(
-                lambda x: np.ceil(x / 2)
-            )
+            data["niveau_vie_quintile"] = data["niveau_vie_decile"].apply(lambda x: np.ceil(x / 2))
         data = data.sort_index()
 
         return data.copy()
 
-    return create_niveau_vie_quantiles_(
-        data_bdf, option="bdf"
-    ), create_niveau_vie_quantiles_(data_emp, option="emp")
+    return create_niveau_vie_quantiles_(data_bdf, option="bdf"), create_niveau_vie_quantiles_(data_emp, option="emp")
 
 
 if __name__ == "__main__":

@@ -36,9 +36,7 @@ def create_donation_classes(year_data):
         # Classes based on niveau_vie_decile and rural
         data["donation_class_3"] = 0
         data["donation_class_3"] = data.apply(
-            lambda row: "{}_{}".format(
-                int(row["niveau_vie_decile"]), int(row["rural"])
-            ),
+            lambda row: "{}_{}".format(int(row["niveau_vie_decile"]), int(row["rural"])),
             axis=1,
         )
         return data.copy()

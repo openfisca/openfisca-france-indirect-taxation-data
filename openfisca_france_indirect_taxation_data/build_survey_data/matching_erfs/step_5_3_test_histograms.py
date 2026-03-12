@@ -12,18 +12,14 @@ from openfisca_france_indirect_taxation.build_survey_data.utils import histogram
 from openfisca_france_indirect_taxation.utils import assets_directory
 
 data_erfs = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_erfs", "data_matching_erfs.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_erfs", "data_matching_erfs.csv"),
     sep=",",
     decimal=".",
 )
 
 
 data_matched_rank = pd.read_csv(
-    os.path.join(
-        assets_directory, "matching", "matching_erfs", "data_matched_rank.csv"
-    ),
+    os.path.join(assets_directory, "matching", "matching_erfs", "data_matched_rank.csv"),
     sep=",",
     decimal=".",
 )
@@ -38,9 +34,7 @@ def histogram_revdecm(data_matched, data_erfs):
         list_values_erfs.append(data_erfs["revdecm"].quantile(i))
         list_keys.append("{}".format(i))
 
-    figure = histogrammes(
-        list_keys, list_values_matched, list_values_erfs, "Matched", "ERFS"
-    )
+    figure = histogrammes(list_keys, list_values_matched, list_values_erfs, "Matched", "ERFS")
 
     return figure
 

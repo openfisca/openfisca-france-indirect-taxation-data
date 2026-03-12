@@ -31,12 +31,8 @@ input_enl = survey_enl.get_values(table="menlogfm_diff")
 
 year_bdf = 2011
 
-openfisca_survey_collection = SurveyCollection.load(
-    collection="openfisca_indirect_taxation"
-)
-openfisca_survey = openfisca_survey_collection.get_survey(
-    "openfisca_indirect_taxation_data_{}".format(year_bdf)
-)
+openfisca_survey_collection = SurveyCollection.load(collection="openfisca_indirect_taxation")
+openfisca_survey = openfisca_survey_collection.get_survey("openfisca_indirect_taxation_data_{}".format(year_bdf))
 input_data_frame = openfisca_survey.get_values(table="input")
 input_data_frame.reset_index(inplace=True)
 
@@ -123,6 +119,4 @@ menage_enl_keep["coml11"].plot.density()
 conso_bdf_keep["poste_coicop_451"].plot.density()
 
 menage_enl_keep["coml11"].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-conso_bdf_keep["poste_coicop_451"].quantile(
-    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-)
+conso_bdf_keep["poste_coicop_451"].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])

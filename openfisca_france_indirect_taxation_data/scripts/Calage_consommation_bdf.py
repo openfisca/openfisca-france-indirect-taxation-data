@@ -28,16 +28,14 @@ def get_bdf_aggregates(data_year=None):
     assert data_year is not None
     depenses = get_input_data_frame(data_year)
     liste_variables = depenses.columns.tolist()
-    liste_postes = [
-        element for element in liste_variables if element[:6] == "poste_"
-    ] + ["rev_disponible", "rev_disp_yc_loyerimpute", "loyer_impute"]
+    liste_postes = [element for element in liste_variables if element[:6] == "poste_"] + [
+        "rev_disponible",
+        "rev_disp_yc_loyerimpute",
+        "loyer_impute",
+    ]
 
-    bdf_aggregates_by_poste = pd.DataFrame(
-        index=liste_postes, columns=["bdf_aggregates"]
-    )
-    bdf_aggregates_by_poste["bdf_aggregates"] = (
-        depenses[liste_postes].mul(depenses["pondmen"], axis=0)
-    ).sum(axis=0)
+    bdf_aggregates_by_poste = pd.DataFrame(index=liste_postes, columns=["bdf_aggregates"])
+    bdf_aggregates_by_poste["bdf_aggregates"] = (depenses[liste_postes].mul(depenses["pondmen"], axis=0)).sum(axis=0)
 
     return bdf_aggregates_by_poste
 
@@ -88,9 +86,7 @@ def sum_and_remove(data_frame, col, rows_to_sum, new_row):
 def get_reste_a_charge_sante_cn(target_year):
     """La compta nat regroupe les dépenses des ménages et des organismes complémentaires. A l'aide du compte de santé, on
     calcule la part des dépenses de santé des ménages, à isoler dans la compta nat."""
-    depenses_sante_file_path = os.path.join(
-        assets_directory, "depenses", "CNS2024_Vue_d_ensemble.xlsx"
-    )
+    depenses_sante_file_path = os.path.join(assets_directory, "depenses", "CNS2024_Vue_d_ensemble.xlsx")
 
     depenses_sante = pd.read_excel(
         depenses_sante_file_path,
@@ -98,19 +94,11 @@ def get_reste_a_charge_sante_cn(target_year):
         header=4,
         usecols=[i for i in range(1, 16)],
     )
-    depenses_sante = depenses_sante.drop(index=[3, 4, 5], axis=0).rename(
-        {"Unnamed: 1": "Financeur"}, axis=1
-    )
+    depenses_sante = depenses_sante.drop(index=[3, 4, 5], axis=0).rename({"Unnamed: 1": "Financeur"}, axis=1)
 
-    menages = float(
-        depenses_sante.loc[depenses_sante["Financeur"] == "Ménages", target_year].iloc[
-            0
-        ]
-    )
+    menages = float(depenses_sante.loc[depenses_sante["Financeur"] == "Ménages", target_year].iloc[0])
     complementaires = float(
-        depenses_sante.loc[
-            depenses_sante["Financeur"] == "Organismes complémentaires", target_year
-        ].iloc[0]
+        depenses_sante.loc[depenses_sante["Financeur"] == "Organismes complémentaires", target_year].iloc[0]
     )
     part_menages = menages / (menages + complementaires)
     return part_menages
@@ -119,34 +107,18 @@ def get_reste_a_charge_sante_cn(target_year):
 def get_cn_aggregates(target_year):
     """Calcule les agrégats de compta nat utilisables pour un année cible."""
     # Dépenses de conso
-    conso_effective_file_path = os.path.join(
-        assets_directory, "depenses", "conso_eff_fonction_2023.xls"
-    )
+    conso_effective_file_path = os.path.join(assets_directory, "depenses", "conso_eff_fonction_2023.xls")
 
-    masses_cn_data_frame = pd.read_excel(
-        conso_effective_file_path, sheet_name="MEURcour", header=4
-    )
-    masses_cn_data_frame.rename(
-        columns={"Unnamed: 0": "Code", "Unnamed: 1": "Label"}, inplace=True
-    )
-    masses_cn_data_frame = masses_cn_data_frame.loc[
-        :, ["Code", "{}".format(target_year)]
-    ].copy()
+    masses_cn_data_frame = pd.read_excel(conso_effective_file_path, sheet_name="MEURcour", header=4)
+    masses_cn_data_frame.rename(columns={"Unnamed: 0": "Code", "Unnamed: 1": "Label"}, inplace=True)
+    masses_cn_data_frame = masses_cn_data_frame.loc[:, ["Code", "{}".format(target_year)]].copy()
     masses_cn_data_frame.replace(to_replace=ajust_postes_cn, inplace=True)
-    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame.loc[
-        :, "Code"
-    ].str.replace(r"^CP", "", regex=True)
-    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame.loc[
-        :, "Code"
-    ].str.strip()
+    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame.loc[:, "Code"].str.replace(r"^CP", "", regex=True)
+    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame.loc[:, "Code"].str.strip()
 
     masses_cn_data_frame.dropna(inplace=True)
-    masses_cn_data_frame.loc[:, "Code"] = (
-        masses_cn_data_frame["Code"].astype(str).apply(lambda x: f"poste_{x}")
-    )
-    masses_cn_data_frame.loc[:, "Code"] = (
-        masses_cn_data_frame["Code"].astype(str).apply(lambda x: format_poste(x))
-    )
+    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame["Code"].astype(str).apply(lambda x: f"poste_{x}")
+    masses_cn_data_frame.loc[:, "Code"] = masses_cn_data_frame["Code"].astype(str).apply(lambda x: format_poste(x))
 
     # On garde les agrégats à un niveau supérieur pour correspondre à Bdf
     masses_cn_data_frame = masses_cn_data_frame[
@@ -221,13 +193,8 @@ def get_cn_aggregates(target_year):
 
     # Correction dépenses de santé
     part_menages = get_reste_a_charge_sante_cn(target_year)
-    masses_cn_data_frame.loc[
-        masses_cn_data_frame["Code"] == "poste_06", "{}".format(target_year)
-    ] = (
-        part_menages
-        * masses_cn_data_frame.loc[
-            masses_cn_data_frame["Code"] == "poste_06", "{}".format(target_year)
-        ]
+    masses_cn_data_frame.loc[masses_cn_data_frame["Code"] == "poste_06", "{}".format(target_year)] = (
+        part_menages * masses_cn_data_frame.loc[masses_cn_data_frame["Code"] == "poste_06", "{}".format(target_year)]
     )
     liste_postes_cn = remove_prefixes(masses_cn_data_frame["Code"].tolist())
 
@@ -237,28 +204,21 @@ def get_cn_aggregates(target_year):
         "poste_12",
         "poste_13",
     ]
-    liste_postes_cn = [
-        element for element in liste_postes_cn if element[:8] in liste_13postes
-    ]
-    masses_cn_postes_data_frame = masses_cn_data_frame.loc[
-        masses_cn_data_frame["Code"].isin(liste_postes_cn)
-    ]
+    liste_postes_cn = [element for element in liste_postes_cn if element[:8] in liste_13postes]
+    masses_cn_postes_data_frame = masses_cn_data_frame.loc[masses_cn_data_frame["Code"].isin(liste_postes_cn)]
     masses_cn_postes_data_frame.set_index("Code", inplace=True)
 
     # Correction territoriale
-    correction_territoriale = get_correction_territoriale(
-        2022, masses_cn_postes_data_frame, liste_postes_cn
-    )
+    correction_territoriale = get_correction_territoriale(2022, masses_cn_postes_data_frame, liste_postes_cn)
     masses_cn_postes_data_frame = masses_cn_postes_data_frame.merge(
         correction_territoriale.groupby(by="Code").sum(),
         "left",
         left_index=True,
         right_index=True,
     )
-    masses_cn_postes_data_frame["{} corrigé".format(target_year)] = (
-        masses_cn_postes_data_frame["{}".format(target_year)]
-        + masses_cn_postes_data_frame["Solde territorial"].fillna(0)
-    )
+    masses_cn_postes_data_frame["{} corrigé".format(target_year)] = masses_cn_postes_data_frame[
+        "{}".format(target_year)
+    ] + masses_cn_postes_data_frame["Solde territorial"].fillna(0)
 
     masses_cn_postes_data_frame.rename(
         columns={"{} corrigé".format(target_year): "conso_CN_{}".format(target_year)},
@@ -283,35 +243,22 @@ def get_inflators_bdf_to_cn(data_year):
         for element in liste_postes_bdf:
             if poste in element:
                 bdf_aggregates[poste] += float(data_bdf.loc[element].iloc[0])
-    data_bdf_postes_cn = pd.DataFrame.from_dict(
-        bdf_aggregates, orient="index", columns=["bdf_aggregates"]
-    )
+    data_bdf_postes_cn = pd.DataFrame.from_dict(bdf_aggregates, orient="index", columns=["bdf_aggregates"])
 
     masses = data_cn.merge(data_bdf_postes_cn, left_index=True, right_index=True)
-    masses.rename(
-        columns={"bdf_aggregates": "conso_bdf{}".format(data_year)}, inplace=True
-    )
+    masses.rename(columns={"bdf_aggregates": "conso_bdf{}".format(data_year)}, inplace=True)
 
-    inflators_bdf_to_cn = (
-        masses["conso_CN_{}".format(data_year)]
-        / masses["conso_bdf{}".format(data_year)]
-    ).to_dict()
+    inflators_bdf_to_cn = (masses["conso_CN_{}".format(data_year)] / masses["conso_bdf{}".format(data_year)]).to_dict()
     return {k: v for k, v in inflators_bdf_to_cn.items() if v != float("inf")}
 
 
 def get_inflators_cn_to_cn(target_year, data_year):
     """Calcule l'inflateur de vieillissement à partir des masses de comptabilité nationale."""
-    data_year_cn_aggregates = get_cn_aggregates(data_year)[
-        "conso_CN_{}".format(data_year)
-    ].to_dict()
-    target_year_cn_aggregates = get_cn_aggregates(target_year)[
-        "conso_CN_{}".format(target_year)
-    ].to_dict()
+    data_year_cn_aggregates = get_cn_aggregates(data_year)["conso_CN_{}".format(data_year)].to_dict()
+    target_year_cn_aggregates = get_cn_aggregates(target_year)["conso_CN_{}".format(target_year)].to_dict()
 
     ratios = {
-        key: (target_year_cn_aggregates[key] / data_year_cn_aggregates[key])
-        if data_year_cn_aggregates[key] != 0
-        else 0
+        key: (target_year_cn_aggregates[key] / data_year_cn_aggregates[key]) if data_year_cn_aggregates[key] != 0 else 0
         for key in list(data_year_cn_aggregates.keys())
     }
     return ratios
@@ -333,13 +280,9 @@ def get_inflators(target_year, data_year):
             for key in list(inflators_cn_to_cn.keys()):
                 if key in list(inflators_bdf_to_cn.keys()):
                     if key in element:
-                        ratio_by_variable[element] = (
-                            inflators_bdf_to_cn[key] * inflators_cn_to_cn[key]
-                        )
+                        ratio_by_variable[element] = inflators_bdf_to_cn[key] * inflators_cn_to_cn[key]
         elif element in ["depenses_carburants", "depenses_essence", "depenses_diesel"]:
-            ratio_by_variable[element] = (
-                inflators_bdf_to_cn["poste_07_2_2"] * inflators_cn_to_cn["poste_07_2_2"]
-            )
+            ratio_by_variable[element] = inflators_bdf_to_cn["poste_07_2_2"] * inflators_cn_to_cn["poste_07_2_2"]
 
     return ratio_by_variable
 
@@ -358,12 +301,8 @@ def get_inflators_cn_23_to_24():
 
     comptes_trim.rename(columns={"Unnamed: 0": "Trimestre"}, inplace=True)
     comptes_trim.dropna(axis=0, inplace=True)
-    total_2024 = comptes_trim.loc[
-        comptes_trim["Trimestre"].str.startswith("2024"), "TOTAL"
-    ].sum()
-    total_2023 = comptes_trim.loc[
-        comptes_trim["Trimestre"].str.startswith("2023"), "TOTAL"
-    ].sum()
+    total_2024 = comptes_trim.loc[comptes_trim["Trimestre"].str.startswith("2024"), "TOTAL"].sum()
+    total_2023 = comptes_trim.loc[comptes_trim["Trimestre"].str.startswith("2023"), "TOTAL"].sum()
     inflator_conso = total_2024 / total_2023
 
     return inflator_conso
@@ -383,9 +322,7 @@ def get_inflators_by_year(rebuild=False, year_range=None, data_year=None):
             else:
                 inflators = get_inflators(target_year=2023, data_year=data_year)
                 inflator_conso = get_inflators_cn_23_to_24()
-                inflators_2024 = {
-                    key: value * inflator_conso for key, value in inflators.items()
-                }
+                inflators_2024 = {key: value * inflator_conso for key, value in inflators.items()}
                 inflators_by_year[target_year] = inflators_2024
 
         writer_inflators = csv.writer(
@@ -407,9 +344,7 @@ def get_inflators_by_year(rebuild=False, year_range=None, data_year=None):
             header=None,
         )
         for year in year_range:
-            inflators_from_csv_by_year = inflators_from_csv[
-                inflators_from_csv[2] == year
-            ]
+            inflators_from_csv_by_year = inflators_from_csv[inflators_from_csv[2] == year]
             inflators_to_dict = pd.DataFrame.to_dict(inflators_from_csv_by_year)
             inflators = inflators_to_dict[1]
             re_build_inflators[year] = inflators

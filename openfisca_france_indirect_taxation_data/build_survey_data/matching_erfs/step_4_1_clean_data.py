@@ -33,14 +33,10 @@ def create_donation_classes(year_data):
 def prepare_bdf_erfs_matching_data(year_data):
     data_erfs, data_bdf = create_donation_classes(year_data)
     data_erfs.to_csv(
-        os.path.join(
-            assets_directory, "matching", "matching_erfs", "data_matching_erfs.csv"
-        ),
+        os.path.join(assets_directory, "matching", "matching_erfs", "data_matching_erfs.csv"),
         sep=",",
     )
     data_bdf.to_csv(
-        os.path.join(
-            assets_directory, "matching", "matching_erfs", "data_matching_bdf.csv"
-        ),
+        os.path.join(assets_directory, "matching", "matching_erfs", "data_matching_bdf.csv"),
         sep=",",
     )
