@@ -6,8 +6,8 @@ clean:
 		py3clean .
 
 install:
-		@# Install OpenFisca-France-Indirect-Taxation-Data for development.
-		uv sync --all-extras
+		@# Install OpenFisca-France-Indirect-Taxation-Data for development (without optional model).
+		uv sync
 
 build: clean install
 		@# Build the distribution artifacts for the data package.

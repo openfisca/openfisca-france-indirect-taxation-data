@@ -61,7 +61,7 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: build-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}-ubuntu-24.04
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: uv sync
       - name: check-syntax-errors
         run: make check-syntax-errors
       - name: format-style
@@ -89,7 +89,7 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: build-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}-ubuntu-24.04
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: uv sync
       - name: Cleaning
         run: make clean
       - name: Run tests
