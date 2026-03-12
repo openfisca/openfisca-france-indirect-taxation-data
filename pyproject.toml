@@ -30,7 +30,7 @@ requires-python = ">=3.9,<3.13"
 
 [project.optional-dependencies]
 model = [
-    "OpenFisca-France-Indirect-Taxation >= 0.4.dev0",
+    # "OpenFisca-France-Indirect-Taxation >= 0.4.dev0",
 ]
 
 [project.urls]
