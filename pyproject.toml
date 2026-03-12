@@ -21,14 +21,13 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
     "OpenFisca-France-Indirect-Taxation >= 0.4.dev0",
     "pandas >= 2.0.3, < 3.0",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.13"
 
 [project.urls]
 Homepage = "https://github.com/openfisca/openfisca-france-indirect-taxation-data"
