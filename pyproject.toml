@@ -25,7 +25,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-    "OpenFisca-France-Indirect-Taxation >= 0.5.3",
+    "OpenFisca-France-Indirect-Taxation >= 0.4.dev0",
     "pandas >= 2.0.3, < 3.0",
 ]
 requires-python = ">=3.9"
